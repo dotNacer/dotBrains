@@ -19,8 +19,10 @@
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"autoprefixer": "^10.4.20",
+		"bits-ui": "^1.0.0-next.58",
 		"clsx": "^2.1.1",
 		"drizzle-kit": "^0.22.0",
+		"lucide-svelte": "^0.460.1",
 		"mode-watcher": "^0.4.1",
 		"prettier": "^3.3.2",
 		"prettier-plugin-svelte": "^3.2.6",
@@ -40,7 +42,6 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"@xyflow/svelte": "^0.1.24",
 		"drizzle-orm": "^0.33.0",
-		"lucide-svelte": "^0.460.1",
 		"postgres": "^3.4.4"
 	}
 }
