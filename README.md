@@ -1,3 +1,15 @@
+# dotBrains 🧠
+
+A web application that helps me manage my thoughts and ideas, including a flow driven editor to capture my ideas coupled with a note taking system to record my thoughts.
+
+## Tech Stack
+
+-   [Svelte 5](https://svelte.dev/docs/svelte/overview)
+-   [SvelteFlow](https://github.com/xyflow/xyflow/tree/svelte-5) - Flow based editor
+-   [Tiptap](https://tiptap.dev/) - Rich text editor
+-   [ShadCN-Svelte](https://next.shadcn-svelte.com/) - UI components
+-   [Drizzle](https://orm.drizzle.team/) - Database
+
 # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
