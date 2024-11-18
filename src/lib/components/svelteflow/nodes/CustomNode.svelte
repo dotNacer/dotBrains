@@ -1,10 +1,5 @@
 <script lang="ts">
-    import {
-        Handle,
-        Position,
-        type NodeProps,
-        NodeResizer,
-    } from '@xyflow/svelte'
+    import { Handle, Position, type NodeProps } from '@xyflow/svelte'
 
     let { data } = $props() as NodeProps
 </script>
@@ -12,8 +7,6 @@
 <div
     class="relative rounded-md border-2 border-stone-400 bg-white px-4 py-2 shadow-md"
 >
-    <NodeResizer />
-
     <div class="flex">
         <div class="flex items-center justify-center rounded-full bg-gray-100">
             {data.emoji}

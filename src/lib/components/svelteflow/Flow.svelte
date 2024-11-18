@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { writable } from 'svelte/store'
     import {
         SvelteFlow,
         useSvelteFlow,
@@ -9,85 +8,74 @@
         type OnConnectEnd,
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
-    import { initialNodes, initialEdges } from './nodes-and-edges'
-    import CustomNode from './nodes/CustomNode.svelte'
-    import IntermediaryNode from './nodes/IntermediaryNode.svelte'
 
-    const nodes = writable<Node[]>(initialNodes)
-    const edges = writable<Edge[]>(initialEdges)
+    import {
+        addNode,
+        removeNode,
+        updateNode,
+        getLastNodeID,
+    } from '$lib/services/nodeService'
+    import { nodes } from '$lib/stores/nodeStore'
+    import { edges } from '$lib/stores/edgeStore'
+    import { nodeTypes } from '$lib'
 
-    let rect: DOMRectReadOnly
-    let id = initialEdges.length + 2
-    const getId = () => `${id++}`
+    let rect = $state<DOMRectReadOnly | undefined>(undefined)
 
     const { screenToFlowPosition } = useSvelteFlow()
 
-    let isIntermediaryMenuOpenned = $state(false)
-    const nodeTypes = {
-        custom: CustomNode,
-        intermediary: IntermediaryNode,
-    }
+    let isMenuOpened = $state(false)
+    let isConnecting = $state(false)
+    let menuNodeRef = $state<MenuNodeRef | null>(null)
 
-    const addEdge = (newEdge: Edge) => {
-        edges.update((e) => [...e, newEdge])
-    }
+    $effect(() => {
+        if (!isMenuOpened && menuNodeRef?.closeMenu) {
+            menuNodeRef.closeMenu()
+        }
+    })
 
-    function deleteNode(node: Node) {
-        nodes.update((n) => n.filter((n) => n.id !== node.id))
+    interface MenuNodeRef {
+        closeMenu: () => void
     }
 
     const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
-        if (connectionState.isValid) return
+        isConnecting = true
+        if (connectionState.isValid) {
+            isConnecting = false
+            return
+        }
 
         const sourceNodeId = connectionState.fromNode?.id ?? '1'
-        const id = getId()
+        const id = getLastNodeID() ?? '1'
         const { clientX, clientY } =
             'changedTouches' in event ? event.changedTouches[0] : event
 
-        const newNode: Node = {
-            id,
-            type: 'intermediary',
-            data: {
-                name: `Node ${id}`,
-                job: 'New Node',
-                emoji: '🔄',
+        addNode(
+            'menu',
+            {
+                ref: (node: MenuNodeRef) => {
+                    menuNodeRef = node
+                },
             },
-            position: screenToFlowPosition({
+            screenToFlowPosition({
                 x: clientX,
                 y: clientY,
             }),
-            origin: [0.5, 0.0],
-        }
+        )
 
-        nodes.update((n) => [...n, newNode])
-        edges.update((e) => [
-            ...e,
-            {
-                source: sourceNodeId,
-                target: id,
-                id: `${sourceNodeId}--${id}`,
-            },
-        ])
-
-        isIntermediaryMenuOpenned = true
-
-        $nodes = $nodes
-        $edges = $edges
+        isMenuOpened = true
+        setTimeout(() => {
+            isConnecting = false
+        }, 100)
     }
-    function handlePaneClick(event: MouseEvent | TouchEvent) {
-        if (isIntermediaryMenuOpenned) {
-            const intermediaryNodeToDelete = $nodes.find(
-                (node) => node.type === 'intermediary',
-            )
-            if (intermediaryNodeToDelete) {
-                deleteNode(intermediaryNodeToDelete)
-            }
-            isIntermediaryMenuOpenned = false
+
+    function handlePaneClick() {
+        if (isConnecting) return
+
+        if (isMenuOpened) {
+            isMenuOpened = false
         }
     }
 </script>
-
-<svelte:window />
 
 <div class="wrapper" bind:contentRect={rect}>
     <SvelteFlow
@@ -97,7 +85,7 @@
         fitView
         fitViewOptions={{ padding: 2 }}
         onconnectend={handleConnectEnd}
-        on:paneclick={(e) => handlePaneClick(e.detail.event)}
+        on:paneclick={handlePaneClick}
     >
         <Background />
     </SvelteFlow>
@@ -119,7 +107,7 @@
         bottom: -10px;
     }
 
-    :global(.svelte-flow .svelte-flow__node) {
+    /* :global(.svelte-flow .svelte-flow__node) {
         height: 40px;
         width: 150px;
         justify-content: center;
@@ -127,7 +115,7 @@
         display: flex;
         border-width: 2px;
         font-weight: 700;
-    }
+    } */
 
     :global(
             .svelte-flow .svelte-flow__edge path,
