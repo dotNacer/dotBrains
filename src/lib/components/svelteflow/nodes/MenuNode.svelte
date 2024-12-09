@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, getContext } from 'svelte'
+    import { scale } from 'svelte/transition'
 
     import {
         Handle,
@@ -10,7 +11,13 @@
         type Edge,
     } from '@xyflow/svelte'
 
-    import { removeNode } from '$lib/services/nodeService'
+    import {
+        removeNode,
+        updateNodeToCustom,
+        updateNode,
+    } from '$lib/services/nodeService'
+    import { toast } from 'svelte-sonner'
+
     let { id, data } = $props()
 
     // const { updateNode, getEdges } = useSvelteFlow()
@@ -28,10 +35,15 @@
 
     // Function to close menu and remove node
     function closeMenu() {
-        removeNode(id)
+        if (!wasTransformed) {
+            removeNode(id)
+        }
     }
 
+    let mounted = $state(false)
+
     onMount(() => {
+        mounted = true
         console.log('onMount', id)
         const input = document.getElementById(`input-${id}`)
         if (input) {
@@ -52,25 +64,43 @@
             document.removeEventListener('keydown', handleEscape)
         }
     })
+
+    let wasTransformed = $state(false)
+
+    function transformToCustomNode() {
+        wasTransformed = true
+        updateNodeToCustom(id)
+        const input = document.getElementById(`input-${id}`)
+        toast.success('Node created')
+        if (input) {
+            input.blur()
+        }
+    }
 </script>
 
-<Command.Root>
-    <Command.Input
-        placeholder="Type a command or search..."
-        onblur={closeMenu}
-    />
-    <Command.List>
-        <Command.Empty>No results found.</Command.Empty>
-        <Command.Group heading="Suggestions">
-            <Command.Item>Calendar</Command.Item>
-            <Command.Item>Search Emoji</Command.Item>
-            <Command.Item>Calculator</Command.Item>
-        </Command.Group>
-        <Command.Separator />
-        <Command.Group heading="Settings">
-            <Command.Item onclick={closeMenu}>Profile</Command.Item>
-            <Command.Item onclick={closeMenu}>Billing</Command.Item>
-            <Command.Item onclick={closeMenu}>Settings</Command.Item>
-        </Command.Group>
-    </Command.List>
-</Command.Root>
+{#if mounted}
+    <div transition:scale={{ duration: 200, start: 0.95 }}>
+        <Command.Root>
+            <Command.Input
+                placeholder="Type a command or search..."
+                onblur={closeMenu}
+            />
+            <Command.List>
+                <Command.Empty>No results found.</Command.Empty>
+                <Command.Group heading="Suggestions">
+                    <Command.Item onclick={transformToCustomNode}>
+                        Calendar
+                    </Command.Item>
+                    <Command.Item>Search Emoji</Command.Item>
+                    <Command.Item>Calculator</Command.Item>
+                </Command.Group>
+                <Command.Separator />
+                <Command.Group heading="Settings">
+                    <Command.Item onclick={closeMenu}>Profile</Command.Item>
+                    <Command.Item onclick={closeMenu}>Billing</Command.Item>
+                    <Command.Item onclick={closeMenu}>Settings</Command.Item>
+                </Command.Group>
+            </Command.List>
+        </Command.Root>
+    </div>
+{/if}

@@ -1,7 +1,6 @@
 import { get } from 'svelte/store'
 import { nodes } from '$lib/stores/nodeStore'
 import type { Node, NodeTypes, XYPosition } from '@xyflow/svelte'
-import { nodeTypes } from '$lib'
 
 /* Documentation: https://svelteflow.dev/api-reference/types/node */
 
@@ -23,12 +22,32 @@ export const addNode = <T extends Record<string, unknown>>(
     nodes.update((nodes) => [...nodes, node])
 }
 
+/**
+ * Removes a node from the nodes store.
+ * @param id - The ID of the node to remove.
+ */
 export const removeNode = (id: string) => {
     nodes.update((nodes) => nodes.filter((node) => node.id !== id))
 }
 
+/**
+ * Updates a node in the nodes store.
+ * @param id - The ID of the node to update.
+ * @param node - The node to update.
+ */
 export const updateNode = (id: string, node: Node) => {
     nodes.update((nodes) => nodes.map((n) => (n.id === id ? node : n)))
+}
+
+export const updateNodeToCustom = (id: string) => {
+    const existingNode = get(nodes).find((n) => n.id === id)
+    if (!existingNode) return
+
+    updateNode(id, {
+        ...existingNode,
+        id,
+        type: 'custom',
+    })
 }
 
 /**

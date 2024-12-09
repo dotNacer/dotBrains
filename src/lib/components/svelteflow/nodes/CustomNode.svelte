@@ -5,7 +5,7 @@
 </script>
 
 <div
-    class="relative rounded-md border-2 border-stone-400 bg-white px-4 py-2 shadow-md"
+    class="relative border-[1px] border-slate-200 bg-white px-4 py-2 shadow-md"
 >
     <div class="flex">
         <div class="flex items-center justify-center rounded-full bg-gray-100">
@@ -17,14 +17,6 @@
         </div>
     </div>
 
-    <Handle
-        type="target"
-        position={Position.Left}
-        class="w-16 rounded-none border-none !bg-teal-500"
-    />
-    <Handle
-        type="source"
-        position={Position.Right}
-        class="w-16 rounded-none border-none !bg-teal-500"
-    />
+    <Handle type="target" position={Position.Left} class="!w-2 !h-2 " />
+    <Handle type="source" position={Position.Right} class="!w-2 !h-2  " />
 </div>

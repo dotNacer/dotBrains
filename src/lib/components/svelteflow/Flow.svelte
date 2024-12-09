@@ -3,8 +3,6 @@
         SvelteFlow,
         useSvelteFlow,
         Background,
-        type Edge,
-        type Node,
         type OnConnectEnd,
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
@@ -19,13 +17,12 @@
     import { edges } from '$lib/stores/edgeStore'
     import { nodeTypes } from '$lib'
 
-    let rect = $state<DOMRectReadOnly | undefined>(undefined)
-
     const { screenToFlowPosition } = useSvelteFlow()
 
     let isMenuOpened = $state(false)
     let isConnecting = $state(false)
     let menuNodeRef = $state<MenuNodeRef | null>(null)
+    let menuNodeId = $state<string | null>(null)
 
     $effect(() => {
         if (!isMenuOpened && menuNodeRef?.closeMenu) {
@@ -38,16 +35,27 @@
     }
 
     const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
-        isConnecting = true
+        console.log('connectionState', connectionState)
+        console.log(connectionState.fromHandle)
         if (connectionState.isValid) {
-            isConnecting = false
             return
         }
 
-        const sourceNodeId = connectionState.fromNode?.id ?? '1'
-        const id = getLastNodeID() ?? '1'
+        if (isMenuOpened) {
+            if (menuNodeRef?.closeMenu) {
+                menuNodeRef.closeMenu()
+            }
+            menuNodeRef = null
+            menuNodeId = null
+            isMenuOpened = false
+        }
+
         const { clientX, clientY } =
             'changedTouches' in event ? event.changedTouches[0] : event
+        const id = getLastNodeID() ?? '1'
+
+        menuNodeId = id
+        isConnecting = true
 
         addNode(
             'menu',
@@ -63,6 +71,7 @@
         )
 
         isMenuOpened = true
+
         setTimeout(() => {
             isConnecting = false
         }, 100)
@@ -72,12 +81,17 @@
         if (isConnecting) return
 
         if (isMenuOpened) {
-            isMenuOpened = false
+            if (menuNodeRef?.closeMenu) {
+                menuNodeRef.closeMenu()
+                menuNodeRef = null
+                menuNodeId = null
+                isMenuOpened = false
+            }
         }
     }
 </script>
 
-<div class="wrapper" bind:contentRect={rect}>
+<div class="wrapper">
     <SvelteFlow
         {nodes}
         {nodeTypes}
@@ -86,27 +100,11 @@
         fitViewOptions={{ padding: 2 }}
         onconnectend={handleConnectEnd}
         on:paneclick={handlePaneClick}
-    >
-        <Background />
-    </SvelteFlow>
+        style="background: #f2f4f3"
+    ></SvelteFlow>
 </div>
 
 <style>
-    :global(.svelte-flow .svelte-flow__handle) {
-        width: 30px;
-        height: 14px;
-        border-radius: 3px;
-        background-color: #784be8;
-    }
-
-    :global(.svelte-flow .svelte-flow__handle-top) {
-        top: -10px;
-    }
-
-    :global(.svelte-flow .svelte-flow__handle-bottom) {
-        bottom: -10px;
-    }
-
     /* :global(.svelte-flow .svelte-flow__node) {
         height: 40px;
         width: 150px;
@@ -127,5 +125,9 @@
     .wrapper {
         height: 100vh;
         width: 100vw;
+    }
+
+    :global(.svelte-flow__attribution) {
+        display: none;
     }
 </style>
