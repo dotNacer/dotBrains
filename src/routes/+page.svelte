@@ -4,7 +4,22 @@
     import { toast } from 'svelte-sonner'
     import { notes } from '$lib/stores/noteStore'
     import { Trash } from 'lucide-svelte'
+    import { Tipex } from '@friendofsvelte/tipex'
 
+    let body = `<p>The initial html content.</p>`
+
+    import { TextAlign } from '@tiptap/extension-text-align'
+
+    const extensions = [
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+        }),
+    ]
+    // import '@friendofsvelte/tipex/styles/Tipex.css'
+    // import '@friendofsvelte/tipex/styles/ProseMirror.css'
+    // import '@friendofsvelte/tipex/styles/Controls.css'
+    // import '@friendofsvelte/tipex/styles/EditLink.css'
+    // import '@friendofsvelte/tipex/styles/CodeBlock.css'
     function addNote() {
         notes.addNote({
             title: 'Untitled Note',
@@ -28,6 +43,25 @@
         </div>
     {/each}
 </div>
+
+<button
+    onclick={() => {
+        console.log('body', body)
+    }}
+>
+    Reset
+</button>
+
+<Tipex
+    {body}
+    controls
+    {extensions}
+    floating
+    focal
+    style="margin-top: 1rem; margin-bottom: 0;"
+    class="h-[70vh] border border-neutral-200"
+></Tipex>
+
 <div class="hidden">
     <h1>Hello World</h1>
     <p>

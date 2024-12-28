@@ -1,6 +1,9 @@
 import { get } from 'svelte/store'
 import { nodes } from '$lib/stores/nodeStore'
 import type { Node, NodeTypes, XYPosition } from '@xyflow/svelte'
+import type { Handle } from '@xyflow/system'
+import { edges } from '$lib/stores/edgeStore'
+import { addEdgeBetweenNodes } from './edgeService'
 
 /* Documentation: https://svelteflow.dev/api-reference/types/node */
 
@@ -11,14 +14,29 @@ import type { Node, NodeTypes, XYPosition } from '@xyflow/svelte'
  * @param type - The type of the node.
  * @param data - The data of the node.
  * @param position - The position of the node.
+ * @param fromNode - Node informations where the node was dragged
  */
 export const addNode = <T extends Record<string, unknown>>(
     type: keyof NodeTypes,
     data: T,
-    position: XYPosition
+    position: XYPosition,
+    fromHandle?: Handle | undefined
 ) => {
+    /* 
+    Infos importantes:
+    - nodeId: id du node
+    - position : "right left blabla"
+    - type: "source" ou "target"
+    
+    */
+    console.log('fromHandle', fromHandle)
     const newId = (parseInt(getLastNodeID() ?? '1') + 1).toString()
-    const node = { id: newId, type, data, position }
+    const node = { id: newId, type, data, position } as Node
+    if (fromHandle?.type === 'source') {
+        addEdgeBetweenNodes(fromHandle?.nodeId ?? '1', newId)
+    } else if (fromHandle?.type === 'target') {
+        addEdgeBetweenNodes(newId, fromHandle?.nodeId ?? '1')
+    }
     nodes.update((nodes) => [...nodes, node])
 }
 

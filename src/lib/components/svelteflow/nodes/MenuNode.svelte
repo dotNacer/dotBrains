@@ -22,7 +22,7 @@
 
     // const { updateNode, getEdges } = useSvelteFlow()
 
-    import * as Command from '$lib/components/ui/command/index.js'
+    import * as Command from '$lib/components/ui/command/'
 
     const addEdge = getContext<(edge: Edge) => void>('addEdge')
 

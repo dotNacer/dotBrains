@@ -20,3 +20,14 @@ export const removeEdge = (id: string) => {
 export const updateEdge = (id: string, edge: Edge) => {
     edges.update((e) => e.map((e) => (e.id === id ? edge : e)))
 }
+
+export const addEdgeBetweenNodes = (source: string, target: string) => {
+    const edge: Edge = {
+        id: `${source}-${target}`,
+        source: source,
+        target: target,
+        type: 'smoothstep',
+        animated: true,
+    }
+    addEdge(edge)
+}
