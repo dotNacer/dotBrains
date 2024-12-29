@@ -2,14 +2,7 @@
     import { onMount, getContext } from 'svelte'
     import { scale } from 'svelte/transition'
 
-    import {
-        Handle,
-        Position,
-        type NodeProps,
-        useHandleConnections,
-        useSvelteFlow,
-        type Edge,
-    } from '@xyflow/svelte'
+    import { type Edge } from '@xyflow/svelte'
 
     import {
         removeNode,
@@ -44,7 +37,6 @@
 
     onMount(() => {
         mounted = true
-        console.log('onMount', id)
         const input = document.getElementById(`input-${id}`)
         if (input) {
             setTimeout(() => {

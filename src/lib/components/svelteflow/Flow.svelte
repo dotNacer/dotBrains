@@ -36,7 +36,7 @@
 
     const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
         console.log('État de connexion', connectionState)
-        console.table({
+        /* console.table({
             fromNodeID: connectionState.fromNode?.id,
             fromNodeHandle:
                 connectionState.fromHandle?.position &&
@@ -45,7 +45,7 @@
             toNodeHandle:
                 connectionState.toHandle?.position &&
                 connectionState.toHandle.type,
-        })
+        }) */
         // console.log(connectionState.fromHandle)
         if (connectionState.isValid) {
             return
@@ -73,12 +73,12 @@
                 ref: (node: MenuNodeRef) => {
                     menuNodeRef = node
                 },
+                fromHandle: connectionState.fromHandle,
             },
             screenToFlowPosition({
                 x: clientX,
                 y: clientY,
             }),
-            connectionState.fromHandle ?? undefined,
         )
 
         isMenuOpened = true
@@ -127,9 +127,9 @@
     } */
 
     :global(
-            .svelte-flow .svelte-flow__edge path,
-            .svelte-flow__connectionline path
-        ) {
+        .svelte-flow .svelte-flow__edge path,
+        .svelte-flow__connectionline path
+    ) {
         stroke-width: 2;
     }
 

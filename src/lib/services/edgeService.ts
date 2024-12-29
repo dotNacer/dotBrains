@@ -10,6 +10,7 @@ import type { Edge } from '@xyflow/svelte'
  */
 
 export const addEdge = (edge: Edge) => {
+    console.log('adding edge', edge)
     edges.update((e) => [...e, edge])
 }
 

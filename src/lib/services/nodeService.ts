@@ -20,7 +20,6 @@ export const addNode = <T extends Record<string, unknown>>(
     type: keyof NodeTypes,
     data: T,
     position: XYPosition,
-    fromHandle?: Handle | undefined
 ) => {
     /* 
     Infos importantes:
@@ -29,15 +28,10 @@ export const addNode = <T extends Record<string, unknown>>(
     - type: "source" ou "target"
     
     */
-    console.log('fromHandle', fromHandle)
     const newId = (parseInt(getLastNodeID() ?? '1') + 1).toString()
     const node = { id: newId, type, data, position } as Node
-    if (fromHandle?.type === 'source') {
-        addEdgeBetweenNodes(fromHandle?.nodeId ?? '1', newId)
-    } else if (fromHandle?.type === 'target') {
-        addEdgeBetweenNodes(newId, fromHandle?.nodeId ?? '1')
-    }
     nodes.update((nodes) => [...nodes, node])
+    return newId
 }
 
 /**
@@ -66,6 +60,13 @@ export const updateNodeToCustom = (id: string) => {
         id,
         type: 'custom',
     })
+
+    const fromHandle = existingNode.data?.fromHandle as Handle | undefined
+    if (fromHandle?.type === 'source') {
+        addEdgeBetweenNodes(fromHandle.nodeId ?? '1', id)
+    } else if (fromHandle?.type === 'target') {
+        addEdgeBetweenNodes(id, fromHandle.nodeId ?? '1')
+    }
 }
 
 /**

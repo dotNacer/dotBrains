@@ -7,9 +7,7 @@
         $props() as NodeProps
 </script>
 
-<div
-    class="relative border-[1px] border-slate-200 bg-white px-4 py-2 shadow-md"
->
+<div class="node relative border border-slate-200 bg-white px-4 py-2">
     <!-- Ajout de l'ID du nœud -->
     <div class="text-xs text-gray-400 mb-2">ID: {id}</div>
 
@@ -28,6 +26,27 @@
         </div>
     </div>
 
-    <Handle type="target" position={Position.Left} class="!w-2 !h-2 " />
-    <Handle type="source" position={Position.Right} class="!w-2 !h-2  " />
+    <Handle
+        id={`target-${id}`}
+        type="target"
+        position={Position.Left}
+        class="!w-2 !h-2 !rounded-none"
+    />
+    <Handle
+        id={`source-${id}`}
+        type="source"
+        position={Position.Right}
+        class="!w-2 !h-2 !rounded-none"
+    />
 </div>
+
+<style>
+    .node {
+        transition: all 0.2s ease-in-out;
+    }
+
+    :global(.selected .node) {
+        border: 1px solid #bababa;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+</style>
