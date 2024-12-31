@@ -12,6 +12,7 @@
         Users,
     } from 'lucide-svelte'
     import { page } from '$app/stores'
+    import { fly, slide } from 'svelte/transition'
 
     let { children } = $props()
     let isExpanded = $state(true)
@@ -46,7 +47,7 @@
 <div class="min-h-screen bg-background text-foreground flex">
     <!-- Sidebar -->
     <nav
-        class={`h-screen  p-4 transition-all duration-300 border-r border-border ${
+        class={`h-screen  p-4 transition-all duration-150 border-r border-border ${
             isExpanded ? 'w-64' : 'w-16'
         } flex flex-col`}
     >
@@ -69,11 +70,14 @@
                     class="flex items-center p-2 hover:opacity-80 {$page.url
                         .pathname === href
                         ? 'bg-primary text-primary-foreground'
-                        : ''}"
+                        : ''}
+                        {isExpanded ? 'w-full' : 'w-8 h-8'}"
                 >
                     <Icon class="h-5 w-5" />
                     {#if isExpanded}
-                        <span class="ml-2">{label}</span>
+                        <span class="ml-2" in:fly={{ y: -50, duration: 150 }}>
+                            {label}
+                        </span>
                     {/if}
                 </a>
             {/each}

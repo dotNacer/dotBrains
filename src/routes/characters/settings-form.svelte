@@ -11,6 +11,7 @@
     import { toast } from 'svelte-sonner'
     import { scenes } from '$lib/stores/sceneStore'
     import SceneSelector from '$lib/components/forms/scene-selector.svelte'
+    import { characters } from '$lib/stores/characterStore'
 
     let { data } = $props<{ data: SuperValidated<Infer<FormSchema>> }>()
 
@@ -18,7 +19,10 @@
         validators: zodClient(formSchema),
         onResult: ({ result }) => {
             if (result.type === 'success') {
-                toast.success(result.data?.message)
+                if (result.data?.character) {
+                    characters.addCharacter(result.data.character)
+                    toast.success(result.data?.message)
+                }
             }
         },
         onError: (error) => {

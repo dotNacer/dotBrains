@@ -3,6 +3,7 @@ import { fail } from '@sveltejs/kit'
 import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { formSchema } from './schema'
+import type { Character } from '$lib/types/Character'
 
 export const load: PageServerLoad = async () => {
     return {
@@ -19,10 +20,19 @@ export const actions: Actions = {
             })
         }
 
+        const newCharacter: Character = {
+            id: Date.now(),
+            name: form.data.name,
+            description: form.data.description,
+            appearancesInScenes: [],
+            references: [],
+        }
+
         return {
             form,
             success: true,
-            message: 'Settings updated successfully!',
+            message: 'Character created successfully!',
+            character: newCharacter,
         }
     },
 }
