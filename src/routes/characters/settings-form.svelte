@@ -1,0 +1,64 @@
+<script lang="ts">
+    import * as Form from '$lib/components/ui/form'
+    import { Input } from '$lib/components/ui/input'
+    import { formSchema, type FormSchema } from './schema'
+    import {
+        type SuperValidated,
+        type Infer,
+        superForm,
+    } from 'sveltekit-superforms'
+    import { zodClient } from 'sveltekit-superforms/adapters'
+    import { toast } from 'svelte-sonner'
+    import { scenes } from '$lib/stores/sceneStore'
+    import SceneSelector from '$lib/components/forms/scene-selector.svelte'
+
+    let { data } = $props<{ data: SuperValidated<Infer<FormSchema>> }>()
+
+    const form = superForm(data, {
+        validators: zodClient(formSchema),
+        onResult: ({ result }) => {
+            if (result.type === 'success') {
+                toast.success(result.data?.message)
+            }
+        },
+        onError: (error) => {
+            toast.error('Something went wrong!')
+        },
+    })
+
+    const { form: formData, enhance } = form
+</script>
+
+<form method="POST" action="?/create" use:enhance>
+    <Form.Field {form} name="name">
+        <Form.Control let:attrs>
+            <Form.Label>Nom</Form.Label>
+            <Input {...attrs} bind:value={$formData.name} />
+        </Form.Control>
+        <Form.Description
+            >Ce nom sera utilisé pour identifier votre personnage.</Form.Description
+        >
+        <Form.FieldErrors />
+    </Form.Field>
+    <Form.Field {form} name="description">
+        <Form.Control let:attrs>
+            <Form.Label>Description</Form.Label>
+            <Input {...attrs} bind:value={$formData.description} />
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
+    <Form.Field {form} name="sceneIds">
+        <Form.Control let:attrs>
+            <Form.Label>Scènes</Form.Label>
+            <SceneSelector
+                scenes={$scenes.scenes}
+                bind:selectedIds={$formData.sceneIds}
+            />
+        </Form.Control>
+        <Form.Description>
+            Sélectionnez les scènes où ce personnage apparaît.
+        </Form.Description>
+        <Form.FieldErrors />
+    </Form.Field>
+    <Form.Button>Submit</Form.Button>
+</form>

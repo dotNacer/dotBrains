@@ -7,9 +7,9 @@
         $props() as NodeProps
 </script>
 
-<div class="node relative border border-slate-200 bg-white px-4 py-2">
+<div class="node relative border border-border bg-card px-4 py-2">
     <!-- Ajout de l'ID du nœud -->
-    <div class="text-xs text-gray-400 mb-2">ID: {id}</div>
+    <div class="text-xs text-muted-foreground mb-2">ID: {id}</div>
 
     <div>
         Position
@@ -17,12 +17,12 @@
         {Math.round(positionAbsoluteY)}
     </div>
     <div class="flex">
-        <div class="flex items-center justify-center rounded-full bg-gray-100">
+        <div class="flex items-center justify-center rounded-full bg-muted">
             {data.emoji}
         </div>
         <div class="ml-2">
             <div class="text-lg font-bold">{data.name}</div>
-            <div class="text-gray-500">{data.job}</div>
+            <div class="text-sm text-muted-foreground">{data.job}</div>
         </div>
     </div>
 

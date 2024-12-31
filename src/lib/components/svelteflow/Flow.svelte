@@ -111,7 +111,7 @@
         fitViewOptions={{ padding: 2 }}
         onconnectend={handleConnectEnd}
         on:paneclick={handlePaneClick}
-        style="background: #f2f4f3"
+        class="!bg-card"
     ></SvelteFlow>
 </div>
 
@@ -127,9 +127,9 @@
     } */
 
     :global(
-        .svelte-flow .svelte-flow__edge path,
-        .svelte-flow__connectionline path
-    ) {
+            .svelte-flow .svelte-flow__edge path,
+            .svelte-flow__connectionline path
+        ) {
         stroke-width: 2;
     }
 

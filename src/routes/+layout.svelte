@@ -9,14 +9,29 @@
         ChevronLeft,
         ChevronRight,
         Workflow,
+        Users,
     } from 'lucide-svelte'
+    import { page } from '$app/stores'
 
     let { children } = $props()
     let isExpanded = $state(true)
 
+    const navigationLinks = [
+        { href: '/', icon: Notebook, label: 'Note Taking' },
+        { href: '/svelteflow', icon: Workflow, label: 'Flow' },
+        { href: '/characters', icon: Users, label: 'Characters' },
+    ]
+
     onMount(() => {
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-        $theme = isDark ? 'dark' : 'light'
+        const storedTheme = localStorage.getItem('theme') as 'dark' | 'light'
+        if (storedTheme) {
+            $theme = storedTheme
+        } else {
+            const isDark = window.matchMedia(
+                '(prefers-color-scheme: dark)',
+            ).matches
+            $theme = isDark ? 'dark' : 'light'
+        }
     })
 
     $effect(() => {
@@ -31,7 +46,7 @@
 <div class="min-h-screen bg-background text-foreground flex">
     <!-- Sidebar -->
     <nav
-        class={`h-screen bg-muted p-4 transition-all duration-300 border-r border-border ${
+        class={`h-screen  p-4 transition-all duration-300 border-r border-border ${
             isExpanded ? 'w-64' : 'w-16'
         } flex flex-col`}
     >
@@ -48,30 +63,25 @@
 
         <!-- Liens de navigation -->
         <div class="space-y-2">
-            <a
-                href="/"
-                class="flex items-center p-2 hover:bg-muted-foreground/20 rounded-lg"
-            >
-                <Notebook class="h-5 w-5" />
-                {#if isExpanded}
-                    <span class="ml-2">Note Taking</span>
-                {/if}
-            </a>
-            <a
-                href="/svelteflow"
-                class="flex items-center p-2 hover:bg-muted-foreground/20 rounded-lg"
-            >
-                <Workflow class="h-5 w-5" />
-                {#if isExpanded}
-                    <span class="ml-2">Flow</span>
-                {/if}
-            </a>
-            <!-- Ajoutez d'autres liens selon vos besoins -->
+            {#each navigationLinks as { href, icon: Icon, label }}
+                <a
+                    {href}
+                    class="flex items-center p-2 hover:opacity-80 {$page.url
+                        .pathname === href
+                        ? 'bg-primary text-primary-foreground'
+                        : ''}"
+                >
+                    <Icon class="h-5 w-5" />
+                    {#if isExpanded}
+                        <span class="ml-2">{label}</span>
+                    {/if}
+                </a>
+            {/each}
         </div>
     </nav>
 
     <!-- Contenu principal -->
-    <div class="flex-1">
+    <div class={`flex-1 ${$page.url.pathname === '/svelteflow' ? '' : 'p-4'}`}>
         <div class="fixed top-4 right-4 z-50">
             <ModeToggle />
         </div>
