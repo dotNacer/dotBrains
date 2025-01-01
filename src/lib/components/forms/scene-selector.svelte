@@ -1,16 +1,24 @@
 <script lang="ts">
     import type { Scene } from '$lib/types/Scene'
     import { Check } from 'lucide-svelte'
+    import { createEventDispatcher } from 'svelte'
 
-    export let selectedIds: number[] = []
-    export let scenes: Scene[] = []
+    const dispatch = createEventDispatcher<{
+        change: number[]
+    }>()
+
+    let { selectedIds = $bindable([]), scenes = [] } = $props<{
+        selectedIds: number[]
+        scenes: Scene[]
+    }>()
 
     function toggleScene(sceneId: number) {
         if (selectedIds.includes(sceneId)) {
-            selectedIds = selectedIds.filter((id) => id !== sceneId)
+            selectedIds = selectedIds.filter((id: number) => id !== sceneId)
         } else {
             selectedIds = [...selectedIds, sceneId]
         }
+        dispatch('change', selectedIds)
     }
 </script>
 
@@ -20,7 +28,7 @@
             type="button"
             class="w-full flex items-center justify-between p-3 text-left border hover:bg-muted transition-colors"
             class:bg-muted={selectedIds.includes(scene.id)}
-            on:click={() => toggleScene(scene.id)}
+            onclick={() => toggleScene(scene.id)}
         >
             <div>
                 <h3 class="font-medium">{scene.title}</h3>

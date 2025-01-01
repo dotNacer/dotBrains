@@ -2,6 +2,7 @@
     import * as Form from '$lib/components/ui/form'
     import { Input } from '$lib/components/ui/input'
     import { formSchema, type FormSchema } from './schema'
+    import { Check } from 'lucide-svelte'
     import {
         type SuperValidated,
         type Infer,
@@ -10,13 +11,14 @@
     import { zodClient } from 'sveltekit-superforms/adapters'
     import { toast } from 'svelte-sonner'
     import { scenes } from '$lib/stores/sceneStore'
-    import SceneSelector from '$lib/components/forms/scene-selector.svelte'
     import { characters } from '$lib/stores/characterStore'
+    import SceneSelector from '$lib/components/forms/scene-selector.svelte'
 
     let { data } = $props<{ data: SuperValidated<Infer<FormSchema>> }>()
 
     const form = superForm(data, {
         validators: zodClient(formSchema),
+        dataType: 'json',
         onResult: ({ result }) => {
             if (result.type === 'success') {
                 if (result.data?.character) {
@@ -31,6 +33,10 @@
     })
 
     const { form: formData, enhance } = form
+
+    function handleSceneChange(event: CustomEvent<number[]>) {
+        $formData.sceneIds = [...event.detail]
+    }
 </script>
 
 <form method="POST" action="?/create" use:enhance>
@@ -54,9 +60,15 @@
     <Form.Field {form} name="sceneIds">
         <Form.Control let:attrs>
             <Form.Label>Scènes</Form.Label>
+            <input
+                type="hidden"
+                name="sceneIds"
+                value={JSON.stringify($formData.sceneIds)}
+            />
             <SceneSelector
                 scenes={$scenes.scenes}
-                bind:selectedIds={$formData.sceneIds}
+                selectedIds={$formData.sceneIds}
+                on:change={handleSceneChange}
             />
         </Form.Control>
         <Form.Description>
