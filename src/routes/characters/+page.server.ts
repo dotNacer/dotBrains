@@ -14,6 +14,8 @@ export const load: PageServerLoad = async () => {
     }
 }
 
+// TODO: Add a service to link Prisma and SvelteKit
+
 export const actions: Actions = {
     create: async (event) => {
         const form = await superValidate(event, zod(formSchema))
