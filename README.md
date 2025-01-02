@@ -8,7 +8,7 @@ A web application that helps me manage my thoughts and ideas, including a flow d
 -   [SvelteFlow](https://github.com/xyflow/xyflow/tree/svelte-5) - Flow based editor
 -   [Tiptap](https://tiptap.dev/) - Rich text editor
 -   [ShadCN-Svelte](https://next.shadcn-svelte.com/) - UI components
--   [Drizzle](https://orm.drizzle.team/) - Database
+-   [Prisma](https://www.prisma.io/) - Database
 
 # sv
 

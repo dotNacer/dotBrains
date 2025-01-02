@@ -2,31 +2,26 @@
     import type { PageData } from './$types'
     import SettingsForm from './settings-form.svelte'
     import { characters } from '$lib/stores/characterStore'
+    import CharacterCard from '$lib/components/character-card.svelte'
 
     let { data } = $props<{ data: PageData }>()
 
-    // Utiliser $derived pour accéder aux personnages du store de manière réactive
     let charactersList = $derived($characters.characters)
 </script>
 
-<div class="w-[400px] p-4 bg-card border border-border">
-    <SettingsForm data={data.form} />
-
-    <!-- Afficher la liste des personnages -->
-    <div class="mt-4">
-        <h2 class="text-lg font-semibold mb-2">Liste des personnages</h2>
+<div class="space-y-2">
+    <h1 class="font-semibold text-3xl">Characters</h1>
+    <div class="gap-4 w-full flex flex-wrap">
         {#if charactersList.length === 0}
             <p>Aucun personnage trouvé</p>
         {:else}
-            <ul class="space-y-2">
-                <!-- TODO : bien affecter les scenes -->
-                {#each charactersList as character}
-                    <li>{character.name}</li>
-                    <li class="text-sm text-muted-foreground">
-                        {character.appearancesInScenes.length}
-                    </li>
-                {/each}
-            </ul>
+            {#each charactersList as character}
+                <CharacterCard {character} />
+            {/each}
         {/if}
+    </div>
+
+    <div class="w-[400px] p-4 bg-card border border-border">
+        <SettingsForm data={data.form} />
     </div>
 </div>
