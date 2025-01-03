@@ -1,12 +1,11 @@
 <script lang="ts">
     import type { PageData } from './$types'
     import SettingsForm from './settings-form.svelte'
-    import { characters } from '$lib/stores/characterStore'
     import CharacterCard from '$lib/components/character-card.svelte'
 
     let { data } = $props<{ data: PageData }>()
 
-    let charactersList = $derived($characters.characters)
+    let charactersList = $derived(data.characters)
 </script>
 
 <div class="space-y-2">
@@ -16,7 +15,7 @@
             <p>Aucun personnage trouvé</p>
         {:else}
             {#each charactersList as character}
-                <CharacterCard {character} />
+                <CharacterCard {character} editForm={data.editForm} />
             {/each}
         {/if}
     </div>
