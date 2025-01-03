@@ -58,6 +58,7 @@
                 action="?/delete"
                 use:enhance
                 onclick={(e) => e.stopPropagation()}
+                role="presentation"
             >
                 <input type="hidden" name="id" value={character.id} />
                 <Button variant="destructive" type="submit">Delete</Button>

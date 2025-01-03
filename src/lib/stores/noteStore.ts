@@ -28,8 +28,8 @@ function createNoteStore() {
                 notes.map((note) =>
                     note.id === id
                         ? { ...note, ...updatedNote, updatedAt: new Date() }
-                        : note
-                )
+                        : note,
+                ),
             ),
         deleteNote: (id: number) =>
             update((notes) => notes.filter((note) => note.id !== id)),
