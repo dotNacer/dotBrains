@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PageData } from './$types'
-    import SettingsForm from './settings-form.svelte'
+    import SettingsForm from './character-create-form.svelte'
     import CharacterCard from '$lib/components/character-card.svelte'
 
     let { data } = $props<{ data: PageData }>()
