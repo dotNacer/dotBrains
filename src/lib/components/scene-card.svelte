@@ -1,17 +1,17 @@
 <script lang="ts">
-    import type { Character } from '$lib/types/Character'
+    import type { Scene } from '$lib/types/Scene'
     import { fly } from 'svelte/transition'
     import { enhance } from '$app/forms'
-    import CharacterEditForm from './character-edit-form.svelte'
+    import SceneEditForm from './scene-edit-form.svelte'
     import type { SuperValidated, Infer } from 'sveltekit-superforms'
-    import { formSchema } from '../../routes/characters/schema'
+    import { formSchema } from '../../routes/scenes/schema'
     import { Button } from '$lib/components/ui/button'
-    import type { Scene } from '$lib/types/Scene'
+    import type { Character } from '$lib/types/Character'
 
-    let { character, editForm, scenes } = $props<{
-        character: Character
+    let { scene, editForm, characters } = $props<{
+        scene: Scene
         editForm: SuperValidated<Infer<typeof formSchema>>
-        scenes: Scene[]
+        characters: Character[]
     }>()
     let isExpanded = $state(false)
     let isEditing = $state(false)
@@ -32,11 +32,11 @@
     out:fly={{ y: 100, duration: 150 }}
 >
     {#if !isEditing}
-        <h3 class="font-medium text-xl">{character.name}</h3>
-        <p class="">{character.description}</p>
+        <h3 class="font-medium text-xl">{scene.title}</h3>
+        <p class="">{scene.description}</p>
         <p class="text-sm text-muted-foreground">
-            {#each character.scenes as sceneRelation}
-                {sceneRelation.scene.title}
+            {#each scene.characters as characterRelation}
+                {characterRelation.character.name}
             {/each}
         </p>
 
@@ -59,7 +59,7 @@
                 use:enhance
                 onclick={(e) => e.stopPropagation()}
             >
-                <input type="hidden" name="id" value={character.id} />
+                <input type="hidden" name="id" value={scene.id} />
                 <Button variant="destructive" type="submit">Delete</Button>
             </form>
         </div>
@@ -71,11 +71,11 @@
         >
             Cancel
         </Button>
-        <CharacterEditForm
-            {character}
+        <SceneEditForm
+            {scene}
             formData={editForm}
             onSubmit={handleEditSubmit}
-            {scenes}
+            {characters}
         />
     {/if}
 </div>

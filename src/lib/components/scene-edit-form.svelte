@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as Form from '$lib/components/ui/form'
     import { Input } from '$lib/components/ui/input'
-    import { formSchema } from '../../routes/characters/schema'
+    import { formSchema } from '../../routes/scenes/schema'
     import { Check } from 'lucide-svelte'
     import {
         type SuperValidated,
@@ -10,16 +10,16 @@
     } from 'sveltekit-superforms'
     import { zodClient } from 'sveltekit-superforms/adapters'
     import { toast } from 'svelte-sonner'
-    import SceneSelector from '$lib/components/forms/scene-selector.svelte'
-    import type { Character } from '$lib/types/Character'
+    import CharacterSelector from '$lib/components/forms/character-selector.svelte'
     import type { Scene } from '$lib/types/Scene'
     import { slide } from 'svelte/transition'
+    import type { Character } from '$lib/types/Character'
 
-    let { character, formData, onSubmit, scenes } = $props<{
-        character: Character
+    let { scene, formData, onSubmit, characters } = $props<{
+        scene: Scene
         formData: SuperValidated<Infer<typeof formSchema>>
         onSubmit?: (result: { result: { type: string } }) => void
-        scenes: Scene[]
+        characters: Character[]
     }>()
 
     const form = superForm(formData, {
@@ -29,7 +29,7 @@
             if (result.result.type === 'success') {
                 toast.success(
                     result.result.data?.message ||
-                        'Character updated successfully!',
+                        'Scene updated successfully!',
                 )
                 onSubmit?.(result)
             }
@@ -41,27 +41,28 @@
 
     const { form: editFormData, enhance } = form
 
-    // Initialiser le formulaire avec les données du personnage
-    $editFormData.name = character.name
-    $editFormData.description = character.description
-    $editFormData.sceneIds = character.scenes.map(
-        (sceneRelation: { scene: { id: number } }) => sceneRelation.scene.id,
+    // Initialiser le formulaire avec les données de la scène
+    $editFormData.title = scene.title
+    $editFormData.description = scene.description
+    $editFormData.characterIds = scene.characters.map(
+        (characterRelation: { character: { id: number } }) =>
+            characterRelation.character.id,
     )
 
-    function handleSceneChange(event: CustomEvent<number[]>) {
-        $editFormData.sceneIds = [...event.detail]
+    function handleCharacterChange(event: CustomEvent<number[]>) {
+        $editFormData.characterIds = [...event.detail]
     }
 </script>
 
 <form method="POST" action="?/update" use:enhance transition:slide>
-    <input type="hidden" name="id" value={character.id} />
-    <Form.Field {form} name="name">
+    <input type="hidden" name="id" value={scene.id} />
+    <Form.Field {form} name="title">
         <Form.Control let:attrs>
-            <Form.Label>Nom</Form.Label>
-            <Input {...attrs} bind:value={$editFormData.name} />
+            <Form.Label>Titre</Form.Label>
+            <Input {...attrs} bind:value={$editFormData.title} />
         </Form.Control>
         <Form.Description
-            >Ce nom sera utilisé pour identifier votre personnage.</Form.Description
+            >Ce titre sera utilisé pour identifier votre scène.</Form.Description
         >
         <Form.FieldErrors />
     </Form.Field>
@@ -72,22 +73,22 @@
         </Form.Control>
         <Form.FieldErrors />
     </Form.Field>
-    <Form.Field {form} name="sceneIds">
+    <Form.Field {form} name="characterIds">
         <Form.Control let:attrs>
-            <Form.Label>Scènes</Form.Label>
+            <Form.Label>Personnages</Form.Label>
             <input
                 type="hidden"
-                name="sceneIds"
-                value={JSON.stringify($editFormData.sceneIds)}
+                name="characterIds"
+                value={JSON.stringify($editFormData.characterIds)}
             />
-            <SceneSelector
-                {scenes}
-                selectedIds={$editFormData.sceneIds}
-                on:change={handleSceneChange}
+            <CharacterSelector
+                {characters}
+                selectedIds={$editFormData.characterIds}
+                on:change={handleCharacterChange}
             />
         </Form.Control>
         <Form.Description>
-            Sélectionnez les scènes où ce personnage apparaît.
+            Sélectionnez les personnages qui apparaissent dans cette scène.
         </Form.Description>
         <Form.FieldErrors />
     </Form.Field>

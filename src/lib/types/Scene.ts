@@ -1,9 +1,16 @@
 import type { Character } from './Character'
 
-// TODO
+export interface CreateSceneDto {
+    title: string
+    description: string
+    characterIds?: number[]
+}
+
 export interface Scene {
     id: number
     title: string
     description: string
-    characters: Character[]
+    characters: {
+        character: Character
+    }[]
 }

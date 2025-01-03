@@ -10,11 +10,12 @@
     } from 'sveltekit-superforms'
     import { zodClient } from 'sveltekit-superforms/adapters'
     import { toast } from 'svelte-sonner'
-    import { scenes } from '$lib/stores/sceneStore'
-    import { characters } from '$lib/stores/characterStore'
     import SceneSelector from '$lib/components/forms/scene-selector.svelte'
+    import type { PageData } from './$types'
 
-    let { data } = $props<{ data: SuperValidated<Infer<FormSchema>> }>()
+    let { data } = $props<{
+        data: SuperValidated<Infer<FormSchema>> & PageData
+    }>()
 
     const form = superForm(data, {
         validators: zodClient(formSchema),
@@ -22,7 +23,6 @@
         onResult: ({ result }) => {
             if (result.type === 'success') {
                 if (result.data?.character) {
-                    characters.addCharacter(result.data.character)
                     toast.success(result.data?.message)
                 }
             }
@@ -66,7 +66,7 @@
                 value={JSON.stringify($formData.sceneIds)}
             />
             <SceneSelector
-                scenes={$scenes.scenes}
+                scenes={data.scenes}
                 selectedIds={$formData.sceneIds}
                 on:change={handleSceneChange}
             />

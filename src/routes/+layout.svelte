@@ -9,6 +9,7 @@
         ChevronLeft,
         ChevronRight,
         Workflow,
+        BookMarked,
         Users,
     } from 'lucide-svelte'
     import { page } from '$app/stores'
@@ -21,6 +22,7 @@
         { href: '/', icon: Notebook, label: 'Note Taking' },
         { href: '/svelteflow', icon: Workflow, label: 'Flow' },
         { href: '/characters', icon: Users, label: 'Characters' },
+        { href: '/scenes', icon: BookMarked, label: 'Scenes' },
     ]
 
     onMount(() => {

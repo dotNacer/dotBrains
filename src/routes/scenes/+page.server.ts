@@ -3,20 +3,20 @@ import { fail } from '@sveltejs/kit'
 import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { formSchema } from './schema'
-import { characterService } from '$lib/services/characterService'
 import { sceneService } from '$lib/services/sceneService'
+import { characterService } from '$lib/services/characterService'
 
 export const load: PageServerLoad = async () => {
-    const [characters, scenes] = await Promise.all([
-        characterService.getAll(),
+    const [scenes, characters] = await Promise.all([
         sceneService.getAll(),
+        characterService.getAll(),
     ])
 
     return {
         form: await superValidate(zod(formSchema)),
         editForm: await superValidate(zod(formSchema)),
-        characters,
         scenes,
+        characters,
     }
 }
 
@@ -28,19 +28,19 @@ export const actions: Actions = {
         }
 
         try {
-            const character = await characterService.create(form.data)
+            const scene = await sceneService.create(form.data)
             return {
                 form,
                 success: true,
-                message: 'Character created successfully!',
-                character,
+                message: 'Scene created successfully!',
+                scene,
             }
         } catch (error) {
             console.error('Error in create action:', error)
             return fail(500, {
                 form,
                 success: false,
-                message: 'Failed to create character',
+                message: 'Failed to create scene',
             })
         }
     },
@@ -52,7 +52,7 @@ export const actions: Actions = {
         if (!id || isNaN(id)) {
             return fail(400, {
                 success: false,
-                message: 'Invalid character ID',
+                message: 'Invalid scene ID',
             })
         }
 
@@ -62,19 +62,19 @@ export const actions: Actions = {
         }
 
         try {
-            const character = await characterService.update(id, form.data)
+            const scene = await sceneService.update(id, form.data)
             return {
                 form,
                 success: true,
-                message: 'Character updated successfully!',
-                character,
+                message: 'Scene updated successfully!',
+                scene,
             }
         } catch (error) {
             console.error('Error in update action:', error)
             return fail(500, {
                 form,
                 success: false,
-                message: 'Failed to update character',
+                message: 'Failed to update scene',
             })
         }
     },
@@ -86,21 +86,21 @@ export const actions: Actions = {
         if (!id || isNaN(id)) {
             return fail(400, {
                 success: false,
-                message: 'Invalid character ID',
+                message: 'Invalid scene ID',
             })
         }
 
         try {
-            await characterService.delete(id)
+            await sceneService.delete(id)
             return {
                 success: true,
-                message: 'Character deleted successfully!',
+                message: 'Scene deleted successfully!',
             }
         } catch (error) {
             console.error('Error in delete action:', error)
             return fail(500, {
                 success: false,
-                message: 'Failed to delete character',
+                message: 'Failed to delete scene',
             })
         }
     },

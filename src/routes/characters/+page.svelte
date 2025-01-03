@@ -15,12 +15,16 @@
             <p>Aucun personnage trouvé</p>
         {:else}
             {#each charactersList as character}
-                <CharacterCard {character} editForm={data.editForm} />
+                <CharacterCard
+                    {character}
+                    editForm={data.editForm}
+                    scenes={data.scenes}
+                />
             {/each}
         {/if}
     </div>
 
     <div class="w-[400px] p-4 bg-card border border-border">
-        <SettingsForm data={data.form} />
+        <SettingsForm {data} />
     </div>
 </div>
