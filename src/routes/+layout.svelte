@@ -23,6 +23,7 @@
         { href: '/svelteflow', icon: Workflow, label: 'Flow' },
         { href: '/characters', icon: Users, label: 'Characters' },
         { href: '/scenes', icon: BookMarked, label: 'Scenes' },
+        { href: '/notes', icon: Notebook, label: 'Notes' },
     ]
 
     onMount(() => {
@@ -49,7 +50,7 @@
 <div class="min-h-screen bg-background text-foreground flex">
     <!-- Sidebar -->
     <nav
-        class={`h-screen  p-4 transition-all duration-150 border-r border-border ${
+        class={`h-screen p-4 transition-all duration-150 border-r border-border ${
             isExpanded ? 'w-64' : 'w-16'
         } flex flex-col`}
     >
@@ -65,7 +66,7 @@
         </button>
 
         <!-- Liens de navigation -->
-        <div class="space-y-2">
+        <div class="space-y-2 flex-1">
             {#each navigationLinks as { href, icon: Icon, label }}
                 <a
                     {href}
@@ -84,13 +85,14 @@
                 </a>
             {/each}
         </div>
+
+        <div class="flex justify-end">
+            <ModeToggle />
+        </div>
     </nav>
 
     <!-- Contenu principal -->
     <div class={`flex-1 ${$page.url.pathname === '/svelteflow' ? '' : 'p-4'}`}>
-        <div class="fixed top-4 right-4 z-50">
-            <ModeToggle />
-        </div>
         <Toaster />
         {@render children()}
     </div>
