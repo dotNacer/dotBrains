@@ -31,9 +31,7 @@
     {/if}
     <div class="flex flex-wrap gap-2">
         {#each notesList as note (note.id)}
-            <div transition:slide class="transition-all duration-150">
-                <NoteComponent {note} />
-            </div>
+            <NoteComponent {note} />
         {/each}
     </div>
 </div>

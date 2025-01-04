@@ -37,6 +37,18 @@ export const noteService = {
         }
     },
 
+    updateContent: async (id: number, content: string) => {
+        try {
+            return await prisma.note.update({
+                where: { id },
+                data: { content },
+            })
+        } catch (error) {
+            console.error('Error updating note content:', error)
+            throw error
+        }
+    },
+
     delete: async (id: number) => {
         try {
             return await prisma.note.delete({

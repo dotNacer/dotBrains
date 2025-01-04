@@ -5,7 +5,7 @@
     import { X } from 'lucide-svelte'
     import { crossfade, fade } from 'svelte/transition'
     import { cubicOut } from 'svelte/easing'
-
+    import TextEditor from './text-editor.svelte'
     let { note } = $props<{ note: Note }>()
     let isOpen = $state(false)
     let cardElement = $state<HTMLElement | null>(null)
@@ -42,11 +42,14 @@
     }
 </script>
 
-<div class="relative" style:height={isOpen ? cardHeight + 'px' : 'auto'}>
+<div
+    class="relative w-full md:w-auto"
+    style:height={isOpen ? cardHeight + 'px' : 'auto'}
+>
     {#if !isOpen}
         <div
             bind:this={cardElement}
-            class="flex flex-col gap-2 border p-4 rounded-md md:w-[350px] w-full cursor-pointer hover:border-primary transition-colors"
+            class="flex bg-background flex-col gap-2 border p-4 rounded-md md:w-[350px] w-full cursor-pointer hover:border-primary transition-colors"
             onclick={toggleModal}
             in:receive={{ key: note.id }}
             out:send={{ key: note.id }}
@@ -86,7 +89,7 @@
             </Button>
             <div class="space-y-4">
                 <h2 class="font-semibold text-2xl">{note.title}</h2>
-                <p class="text-muted-foreground">{note.content}</p>
+                <TextEditor {note} />
                 <div class="flex gap-2">
                     {#each note.tags as tag}
                         <Badge>{tag}</Badge>
