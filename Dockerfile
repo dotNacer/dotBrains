@@ -24,6 +24,7 @@ ENV DATABASE_URL=""
 RUN if [ -f .env.example ]; then \
     cat .env.example >> .env && \
     sed -i "s|DATABASE_URL=.*|DATABASE_URL=\"${DATABASE_URL}\"|g" .env; \
+    echo "DATABASE_URL=\"${DATABASE_URL}\""\
     fi
 
 
