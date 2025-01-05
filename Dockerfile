@@ -17,17 +17,17 @@ RUN npm ci
 # Copier le reste des fichiers du projet
 COPY . .
 
-# Définir DATABASE_URL comme argument
-ENV DATABASE_URL=""
+# Build-time arguments
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
 
-# Ajouter le contenu de .env.example au .env existant et remplacer DATABASE_URL
-RUN if [ -f .env.example ]; then \
-    cat .env.example >> .env && \
-    sed -i "s|DATABASE_URL=.*|DATABASE_URL=\"${DATABASE_URL}\"|g" .env; \
-    echo "DATABASE_URL=\"${DATABASE_URL}\""\
+# Mettre à jour DATABASE_URL dans le fichier .env
+RUN if [ -f .env ]; then \
+    sed -i '/^DATABASE_URL=/d' .env && \
+    echo "DATABASE_URL=\"${DATABASE_URL}\"" >> .env; \
+    else \
+    echo "DATABASE_URL=\"${DATABASE_URL}\"" > .env; \
     fi
-
-
 
 # Générer le client Prisma
 RUN npx prisma generate
@@ -39,4 +39,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Commande pour démarrer l'application
-CMD ["node", "build"]
+CMD ["node", "build/index.js"]
