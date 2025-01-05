@@ -12,9 +12,9 @@ npx prisma db pull --force
 echo "Generating Prisma Client..."
 npx prisma generate
 
-# Exécuter les migrations Prisma
-echo "Running Prisma migrations..."
-npx prisma migrate deploy --preview-feature
+# Pousser le schéma vers la base de données
+echo "Pushing schema to database..."
+npx prisma db push --accept-data-loss
 
 # Vérifier que les tables ont été créées
 echo "Verifying database schema..."
