@@ -22,12 +22,12 @@ ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 
 # Mettre à jour DATABASE_URL dans le fichier .env
-RUN if [ -f .env ]; then \
-    sed -i '/^DATABASE_URL=/d' .env && \
-    echo "DATABASE_URL=\"${DATABASE_URL}\"" >> .env; \
-    else \
+RUN if [ -f .env.example ]; then \
+    cat .env.example > .env && \
+    sed -i "s|DATABASE_URL=.*|DATABASE_URL=\"${DATABASE_URL}\"|g" .env; \
+else \
     echo "DATABASE_URL=\"${DATABASE_URL}\"" > .env; \
-    fi
+fi
 
 # Générer le client Prisma
 RUN npx prisma generate
