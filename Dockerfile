@@ -17,6 +17,9 @@ RUN npm ci
 # Copier le reste des fichiers du projet
 COPY . .
 
+# Définir DATABASE_URL comme argument
+ENV DATABASE_URL=""
+
 # Générer le client Prisma
 RUN npx prisma generate
 
