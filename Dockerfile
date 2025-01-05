@@ -21,6 +21,9 @@ COPY . .
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 
+# S'assurer que le dossier prisma et ses fichiers sont accessibles
+RUN chmod -R 777 /app/prisma
+
 # Mettre à jour DATABASE_URL dans le fichier .env
 RUN if [ -f .env.example ]; then \
     cat .env.example > .env && \
@@ -28,6 +31,9 @@ RUN if [ -f .env.example ]; then \
 else \
     echo "DATABASE_URL=\"${DATABASE_URL}\"" > .env; \
 fi
+
+# Vérifier que le schéma Prisma est présent
+RUN ls -la /app/prisma/schema.prisma
 
 # Générer le client Prisma
 RUN npx prisma generate
