@@ -38,5 +38,9 @@ RUN npm run build
 # Exposer le port (par défaut pour SvelteKit)
 EXPOSE 3000
 
+# Script de démarrage qui exécute les migrations puis démarre l'application
+COPY start.sh .
+RUN chmod +x start.sh
+
 # Commande pour démarrer l'application
-CMD ["node", "build/index.js"]
+CMD ["./start.sh"]
