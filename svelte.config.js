@@ -15,6 +15,10 @@ const config = {
         alias: {
             '@/*': './src/lib/*',
         },
+        // TODO: Très malpropre, https://stackoverflow.com/questions/73790956/cross-site-post-form-submissions-are-forbidden
+        csrf: {
+            checkOrigin: false,
+        },
     },
 }
 
