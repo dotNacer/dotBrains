@@ -1,6 +1,9 @@
 # Utiliser Node.js comme image de base
 FROM node:20-slim
 
+# Installer OpenSSL et les dépendances nécessaires
+RUN apt-get update -y && apt-get install -y openssl
+
 # Définir le répertoire de travail
 WORKDIR /app
 
