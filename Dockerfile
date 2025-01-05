@@ -17,14 +17,16 @@ RUN npm ci
 # Copier le reste des fichiers du projet
 COPY . .
 
+# Définir DATABASE_URL comme argument
+ENV DATABASE_URL=""
+
 # Ajouter le contenu de .env.example au .env existant et remplacer DATABASE_URL
 RUN if [ -f .env.example ]; then \
     cat .env.example >> .env && \
     sed -i "s|DATABASE_URL=.*|DATABASE_URL=\"${DATABASE_URL}\"|g" .env; \
     fi
 
-# Définir DATABASE_URL comme argument
-ENV DATABASE_URL=""
+
 
 # Générer le client Prisma
 RUN npx prisma generate
