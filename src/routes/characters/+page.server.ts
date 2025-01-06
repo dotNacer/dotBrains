@@ -23,9 +23,7 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
     create: async (event) => {
         const form = await superValidate(event, zod(formSchema))
-        if (!form.valid) {
-            return fail(400, { form })
-        }
+        if (!form.valid) return fail(400, { form })
 
         try {
             const character = await characterService.create(form.data)

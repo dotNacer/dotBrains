@@ -7,12 +7,7 @@
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
 
-    import {
-        addNode,
-        removeNode,
-        updateNode,
-        getLastNodeID,
-    } from '$lib/services/nodeService'
+    import { addNode, getLastNodeID } from '$lib/services/nodeService'
     import { nodes } from '$lib/stores/nodeStore'
     import { edges } from '$lib/stores/edgeStore'
     import { nodeTypes } from '$lib'
@@ -127,9 +122,9 @@
     } */
 
     :global(
-            .svelte-flow .svelte-flow__edge path,
-            .svelte-flow__connectionline path
-        ) {
+        .svelte-flow .svelte-flow__edge path,
+        .svelte-flow__connectionline path
+    ) {
         stroke-width: 2;
     }
 

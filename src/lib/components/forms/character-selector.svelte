@@ -13,7 +13,7 @@
 
     function toggleCharacter(id: number) {
         const newSelectedIds = selectedIds.includes(id)
-            ? selectedIds.filter((selectedId) => selectedId !== id)
+            ? selectedIds.filter((selectedId: number) => selectedId !== id)
             : [...selectedIds, id]
         dispatch('change', newSelectedIds)
     }
