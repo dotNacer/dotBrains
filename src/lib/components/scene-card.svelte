@@ -4,7 +4,7 @@
     import { enhance } from '$app/forms'
     import SceneEditForm from './scene-edit-form.svelte'
     import type { SuperValidated, Infer } from 'sveltekit-superforms'
-    import { formSchema } from '../../routes/scenes/schema'
+    import { formSchema } from '$lib/schemas/scenes'
     import { Button } from '$lib/components/ui/button'
     import type { Character } from '$lib/types/Character'
 

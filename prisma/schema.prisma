@@ -12,8 +12,6 @@ model Scene {
   title       String
   description String
   characters  CharactersOnScenes[]
-
-  @@map("scene")
 }
 
 model Character {
@@ -22,8 +20,6 @@ model Character {
   description String
   scenes      CharactersOnScenes[]
   references  Reference[]
-
-  @@map("character")
 }
 
 model CharactersOnScenes {
@@ -33,7 +29,6 @@ model CharactersOnScenes {
   scene       Scene     @relation(fields: [sceneId], references: [id])
 
   @@id([characterId, sceneId])
-  @@map("characters_on_scenes")
 }
 
 model Reference {
@@ -43,8 +38,6 @@ model Reference {
   url         String
   characterId Int
   character   Character @relation(fields: [characterId], references: [id])
-
-  @@map("reference")
 }
 
 model Note {
@@ -54,6 +47,4 @@ model Note {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tags      String[]
-
-  @@map("note")
 }

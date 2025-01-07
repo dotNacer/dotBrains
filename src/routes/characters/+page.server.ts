@@ -2,7 +2,7 @@ import type { PageServerLoad, Actions } from './$types'
 import { fail } from '@sveltejs/kit'
 import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
-import { formSchema } from './schema'
+import { formSchema } from '$lib/schemas/characters'
 import { characterService } from '$lib/services/characterService'
 import { sceneService } from '$lib/services/sceneService'
 

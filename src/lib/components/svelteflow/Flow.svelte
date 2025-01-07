@@ -11,6 +11,9 @@
     import { nodes } from '$lib/stores/nodeStore'
     import { edges } from '$lib/stores/edgeStore'
     import { nodeTypes } from '$lib'
+    import type { Character } from '$lib/types/Character'
+
+    let { characters } = $props<{ characters: Character[] }>()
 
     const { screenToFlowPosition } = useSvelteFlow()
 
@@ -30,18 +33,6 @@
     }
 
     const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
-        console.log('État de connexion', connectionState)
-        /* console.table({
-            fromNodeID: connectionState.fromNode?.id,
-            fromNodeHandle:
-                connectionState.fromHandle?.position &&
-                connectionState.fromHandle.type,
-            toNodeID: connectionState.toNode?.id,
-            toNodeHandle:
-                connectionState.toHandle?.position &&
-                connectionState.toHandle.type,
-        }) */
-        // console.log(connectionState.fromHandle)
         if (connectionState.isValid) {
             return
         }
@@ -63,12 +54,13 @@
         isConnecting = true
 
         addNode(
-            'menu',
+            'scene-creation',
             {
                 ref: (node: MenuNodeRef) => {
                     menuNodeRef = node
                 },
                 fromHandle: connectionState.fromHandle,
+                characters,
             },
             screenToFlowPosition({
                 x: clientX,
@@ -111,16 +103,6 @@
 </div>
 
 <style>
-    /* :global(.svelte-flow .svelte-flow__node) {
-        height: 40px;
-        width: 150px;
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        border-width: 2px;
-        font-weight: 700;
-    } */
-
     :global(
         .svelte-flow .svelte-flow__edge path,
         .svelte-flow__connectionline path

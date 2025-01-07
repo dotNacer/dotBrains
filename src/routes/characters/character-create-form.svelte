@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as Form from '$lib/components/ui/form'
     import { Input } from '$lib/components/ui/input'
-    import { formSchema, type FormSchema } from './schema'
+    import { formSchema, type FormSchema } from '$lib/schemas/characters'
     import { Check } from 'lucide-svelte'
     import {
         type SuperValidated,

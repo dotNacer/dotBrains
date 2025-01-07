@@ -1,19 +1,15 @@
 <script lang="ts">
     import { onMount, getContext } from 'svelte'
     import { scale } from 'svelte/transition'
-
     import { type Edge } from '@xyflow/svelte'
-
-    import {
-        removeNode,
-        updateNodeToCustom,
-        updateNode,
-    } from '$lib/services/nodeService'
+    import { removeNode, updateNodeToCustom } from '$lib/services/nodeService'
     import { toast } from 'svelte-sonner'
+    import SceneCreateForm from '$lib/components/forms/scene-create-form.svelte'
+    import { superValidate } from 'sveltekit-superforms'
+    import { zod } from 'sveltekit-superforms/adapters'
+    import { formSchema } from '$lib/schemas/scenes'
 
     let { id, data } = $props()
-
-    import * as Command from '$lib/components/ui/command/'
 
     const addEdge = getContext<(edge: Edge) => void>('addEdge')
 
@@ -32,8 +28,9 @@
     }
 
     let mounted = $state(false)
+    let wasTransformed = $state(false)
 
-    onMount(() => {
+    onMount(async () => {
         mounted = true
         const input = document.getElementById(`input-${id}`)
         if (input) {
@@ -55,19 +52,32 @@
         }
     })
 
-    let wasTransformed = $state(false)
-
-    function transformToCustomNode() {
-        wasTransformed = true
-        updateNodeToCustom(id)
-        const input = document.getElementById(`input-${id}`)
-        toast.success('Node created')
-        if (input) {
-            input.blur()
+    function handleSubmit(result: { result: { type: string; data?: any } }) {
+        if (result.result.type === 'success') {
+            wasTransformed = true
+            updateNodeToCustom(id)
         }
     }
+
+    let formData = $state({
+        form: null as any,
+        characters: data.characters || [],
+    })
+
+    onMount(async () => {
+        formData.form = await superValidate(zod(formSchema))
+    })
 </script>
 
-{#if mounted}
-    <div transition:scale={{ duration: 200, start: 0.95 }}></div>
+{#if mounted && formData.form}
+    <div
+        transition:scale={{ duration: 200, start: 0.95 }}
+        class="border p-4 w-[400px] bg-background"
+    >
+        <h1 class="text-xl font-semibold mb-4">Create Scene</h1>
+        <SceneCreateForm
+            data={{ ...formData.form, characters: formData.characters }}
+            onSubmit={handleSubmit}
+        />
+    </div>
 {/if}
