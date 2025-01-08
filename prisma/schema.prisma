@@ -12,6 +12,7 @@ model Scene {
   title       String
   description String
   characters  CharactersOnScenes[]
+  node        Node?
 }
 
 model Character {
@@ -47,4 +48,37 @@ model Note {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tags      String[]
+}
+
+// Flow Management
+
+model Node {
+  id          Int       @id @default(autoincrement())
+  positionX   Float
+  positionY   Float
+  sceneId     Int?      @unique
+  scene       Scene?    @relation(fields: [sceneId], references: [id])
+
+  outgoing    Edge[]    @relation("FromNode")
+  incoming    Edge[]    @relation("ToNode")
+  properties  Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Edge {
+  id          Int       @id @default(autoincrement())
+  fromNode    Node      @relation("FromNode", fields: [fromNodeId], references: [id])
+  fromNodeId  Int
+  toNode      Node      @relation("ToNode", fields: [toNodeId], references: [id])
+  toNodeId    Int
+  type        String    @default("default")
+  animated    Boolean   @default(false)
+  label       String?
+  conditions  Json?
+  properties  Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([fromNodeId, toNodeId])
 }

@@ -23,7 +23,12 @@
                 toast.success(
                     result.data?.message || 'Scene created successfully!',
                 )
-                onSubmit?.({ result })
+                onSubmit?.({
+                    result: {
+                        type: 'success',
+                        data: result.data?.scene ?? null,
+                    },
+                })
             }
         },
         onError: (error) => {
@@ -38,7 +43,7 @@
     }
 </script>
 
-<form method="POST" action="?/create" use:enhance>
+<form method="POST" action="?/createScene" use:enhance>
     <Form.Field {form} name="title">
         <Form.Control let:attrs>
             <Form.Label>Titre</Form.Label>

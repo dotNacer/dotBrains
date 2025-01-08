@@ -1,3 +1,5 @@
+import { PrismaClient, Prisma } from '@prisma/client'
+import type { CreateNodeDto } from '$lib/types/Node'
 import { get } from 'svelte/store'
 import { nodes } from '$lib/stores/nodeStore'
 import type { Node, NodeTypes, XYPosition } from '@xyflow/svelte'
@@ -5,8 +7,9 @@ import type { Handle } from '@xyflow/system'
 import { edges } from '$lib/stores/edgeStore'
 import { addEdgeBetweenNodes } from './edgeService'
 
-/* Documentation: https://svelteflow.dev/api-reference/types/node */
+const prisma = new PrismaClient()
 
+/* Documentation: https://svelteflow.dev/api-reference/types/node */
 // addNode va chercher le dernier ID, et prends un type de Node en argument, prends ensuite les data en argument (T)
 
 /**
@@ -19,7 +22,7 @@ import { addEdgeBetweenNodes } from './edgeService'
 export const addNode = <T extends Record<string, unknown>>(
     type: keyof NodeTypes,
     data: T,
-    position: XYPosition,
+    position: XYPosition
 ) => {
     /* 
     Infos importantes:
@@ -76,4 +79,130 @@ export const updateNodeToCustom = (id: string) => {
  */
 export const getLastNodeID = () => {
     return get(nodes).at(-1)?.id
+}
+
+export const nodeService = {
+    create: async (data: CreateNodeDto) => {
+        try {
+            const node = await prisma.node.create({
+                data: {
+                    positionX: data.positionX,
+                    positionY: data.positionY,
+                    scene: data.sceneId
+                        ? {
+                              connect: { id: data.sceneId },
+                          }
+                        : undefined,
+                    properties: data.properties,
+                },
+                include: {
+                    scene: true,
+                    outgoing: true,
+                    incoming: true,
+                },
+            })
+            return node
+        } catch (error) {
+            console.error('Error creating node:', error)
+            throw error
+        }
+    },
+
+    update: async (id: number, data: Partial<CreateNodeDto>) => {
+        try {
+            const node = await prisma.node.update({
+                where: { id },
+                data: {
+                    positionX: data.positionX,
+                    positionY: data.positionY,
+                    scene: data.sceneId
+                        ? {
+                              connect: { id: data.sceneId },
+                          }
+                        : undefined,
+                    properties: data.properties,
+                },
+                include: {
+                    scene: true,
+                    outgoing: true,
+                    incoming: true,
+                },
+            })
+            return node
+        } catch (error) {
+            console.error('Error updating node:', error)
+            throw error
+        }
+    },
+
+    delete: async (id: number) => {
+        try {
+            // First delete all edges connected to this node
+            await prisma.edge.deleteMany({
+                where: {
+                    OR: [{ fromNodeId: id }, { toNodeId: id }],
+                },
+            })
+
+            // Then delete the node
+            return await prisma.node.delete({
+                where: { id },
+                include: {
+                    scene: true,
+                    outgoing: true,
+                    incoming: true,
+                },
+            })
+        } catch (error) {
+            console.error('Error deleting node:', error)
+            throw error
+        }
+    },
+
+    getAll: async () => {
+        try {
+            return await prisma.node.findMany({
+                include: {
+                    scene: true,
+                    outgoing: true,
+                    incoming: true,
+                },
+            })
+        } catch (error) {
+            console.error('Error fetching nodes:', error)
+            throw error
+        }
+    },
+
+    getById: async (id: number) => {
+        try {
+            return await prisma.node.findUnique({
+                where: { id },
+                include: {
+                    scene: true,
+                    outgoing: true,
+                    incoming: true,
+                },
+            })
+        } catch (error) {
+            console.error('Error fetching node:', error)
+            throw error
+        }
+    },
+
+    getBySceneId: async (sceneId: number) => {
+        try {
+            return await prisma.node.findUnique({
+                where: { sceneId },
+                include: {
+                    scene: true,
+                    outgoing: true,
+                    incoming: true,
+                },
+            })
+        } catch (error) {
+            console.error('Error fetching node by scene ID:', error)
+            throw error
+        }
+    },
 }

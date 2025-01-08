@@ -7,9 +7,10 @@
     import SceneCreateForm from '$lib/components/forms/scene-create-form.svelte'
     import { superValidate } from 'sveltekit-superforms'
     import { zod } from 'sveltekit-superforms/adapters'
-    import { formSchema } from '$lib/schemas/scenes'
+    import { formSchema } from '$lib/schemas/nodes'
+    import { enhance } from '$app/forms'
 
-    let { id, data } = $props()
+    let { id, data, positionAbsoluteX, positionAbsoluteY } = $props()
 
     const addEdge = getContext<(edge: Edge) => void>('addEdge')
 
@@ -30,7 +31,14 @@
     let mounted = $state(false)
     let wasTransformed = $state(false)
 
-    onMount(async () => {
+    onMount(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                closeMenu()
+            }
+        }
+        document.addEventListener('keydown', handleEscape)
+
         mounted = true
         const input = document.getElementById(`input-${id}`)
         if (input) {
@@ -39,23 +47,43 @@
             }, 250)
         }
 
-        // Optional: Setup event listener for Escape key
-        const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                closeMenu()
-            }
-        }
-        document.addEventListener('keydown', handleEscape)
-
         return () => {
             document.removeEventListener('keydown', handleEscape)
         }
     })
 
-    function handleSubmit(result: { result: { type: string; data?: any } }) {
+    async function handleSubmit(result: {
+        result: { type: string; data?: any }
+    }) {
         if (result.result.type === 'success') {
             wasTransformed = true
             updateNodeToCustom(id)
+
+            const nodePosition = data.position || { x: 0, y: 0 }
+            const sceneId = result.result.data.id
+
+            // Créer le formulaire pour le node
+            const nodeForm = await superValidate(zod(formSchema))
+            nodeForm.data = {
+                positionX: Math.round(positionAbsoluteX),
+                positionY: Math.round(positionAbsoluteY),
+                sceneId: sceneId,
+                outgoingId: [],
+                incomingId: [],
+                properties: [],
+            }
+
+            // Envoyer la requête pour créer le node
+            const response = await fetch('?/createNode', {
+                method: 'POST',
+                body: JSON.stringify(nodeForm.data),
+            })
+
+            if (response.ok) {
+                toast.success('Node created successfully!')
+            } else {
+                toast.error('Failed to create node')
+            }
         }
     }
 
@@ -64,8 +92,12 @@
         characters: data.characters || [],
     })
 
-    onMount(async () => {
+    async function initForm() {
         formData.form = await superValidate(zod(formSchema))
+    }
+
+    onMount(() => {
+        initForm()
     })
 </script>
 
