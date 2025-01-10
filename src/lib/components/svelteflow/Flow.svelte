@@ -2,18 +2,36 @@
     import {
         SvelteFlow,
         useSvelteFlow,
-        Background,
         type OnConnectEnd,
+        type Node,
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
+    import { get } from 'svelte/store'
 
     import { addNode, getLastNodeID } from '$lib/services/nodeService'
-    import { nodes } from '$lib/stores/nodeStore'
+    import { nodes as nodesStore } from '$lib/stores/nodeStore'
+
+    import type { Scene } from '$lib/types/Scene'
     import { edges } from '$lib/stores/edgeStore'
     import { nodeTypes } from '$lib'
     import type { Character } from '$lib/types/Character'
+    import { onMount } from 'svelte'
 
-    let { characters } = $props<{ characters: Character[] }>()
+    let {
+        characters,
+        scenes,
+        db_nodes: initialNodes,
+    } = $props<{
+        characters: Character[]
+        scenes: Scene[]
+        db_nodes: Node[]
+    }>()
+
+    onMount(() => {
+        if (initialNodes && initialNodes.length > 0) {
+            nodesStore.set(initialNodes)
+        }
+    })
 
     const { screenToFlowPosition } = useSvelteFlow()
 
@@ -91,7 +109,7 @@
 
 <div class="wrapper">
     <SvelteFlow
-        {nodes}
+        nodes={nodesStore}
         {nodeTypes}
         {edges}
         fitView

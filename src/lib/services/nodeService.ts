@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient, Prisma, type Scene } from '@prisma/client'
 import type { CreateNodeDto } from '$lib/types/Node'
 import { get } from 'svelte/store'
 import { nodes } from '$lib/stores/nodeStore'
@@ -54,14 +54,18 @@ export const updateNode = (id: string, node: Node) => {
     nodes.update((nodes) => nodes.map((n) => (n.id === id ? node : n)))
 }
 
-export const updateNodeToCustom = (id: string) => {
+export const updateNodeToCustom = (id: string, sceneData?: Scene) => {
     const existingNode = get(nodes).find((n) => n.id === id)
     if (!existingNode) return
 
     updateNode(id, {
         ...existingNode,
         id,
-        type: 'custom',
+        type: 'scene',
+        data: {
+            ...existingNode.data,
+            scene: sceneData,
+        },
     })
 
     const fromHandle = existingNode.data?.fromHandle as Handle | undefined
@@ -161,13 +165,15 @@ export const nodeService = {
 
     getAll: async () => {
         try {
-            return await prisma.node.findMany({
+            const dbNodes = await prisma.node.findMany({
                 include: {
                     scene: true,
                     outgoing: true,
                     incoming: true,
                 },
             })
+
+            return dbNodes // Return raw database nodes
         } catch (error) {
             console.error('Error fetching nodes:', error)
             throw error

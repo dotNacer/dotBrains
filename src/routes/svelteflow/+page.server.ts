@@ -3,23 +3,42 @@ import { fail } from '@sveltejs/kit'
 import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { formSchema as FormSchemaScene } from '$lib/schemas/scenes'
-import { formSchema as FormSchemaNode } from '$lib/schemas/nodes'
 import type { CreateNodeDto } from '$lib/types/Node'
+
+import { nodes as nodesStore } from '$lib/stores/nodeStore'
 
 import { characterService } from '$lib/services/characterService'
 import { sceneService } from '$lib/services/sceneService'
 import { nodeService } from '$lib/services/nodeService'
 
 export const load: PageServerLoad = async () => {
-    const [characters, scenes] = await Promise.all([
+    const [characters, scenes, dbNodes] = await Promise.all([
         characterService.getAll(),
         sceneService.getAll(),
+        nodeService.getAll(),
     ])
+
+    // Transform dbNodes into the format expected by SvelteFlow
+    const flowNodes = dbNodes.map((node) => ({
+        id: node.id.toString(),
+        type: 'scene',
+        position: {
+            x: node.positionX,
+            y: node.positionY,
+        },
+        data: {
+            properties: node.properties,
+            scene: node.scene,
+            outgoing: node.outgoing,
+            incoming: node.incoming,
+        },
+    }))
 
     return {
         form: await superValidate(zod(FormSchemaScene)),
         characters,
         scenes,
+        nodes: flowNodes, // Send transformed nodes
     }
 }
 

@@ -57,10 +57,10 @@
     }) {
         if (result.result.type === 'success') {
             wasTransformed = true
-            updateNodeToCustom(id)
+            const sceneData = result.result.data
 
             const nodePosition = data.position || { x: 0, y: 0 }
-            const sceneId = result.result.data.id
+            const sceneId = sceneData.id
 
             // Créer le formulaire pour le node
             const nodeForm = await superValidate(zod(formSchema))
@@ -81,6 +81,7 @@
 
             if (response.ok) {
                 toast.success('Node created successfully!')
+                updateNodeToCustom(id, sceneData)
             } else {
                 toast.error('Failed to create node')
             }

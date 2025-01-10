@@ -1,16 +1,23 @@
 <script lang="ts">
     import { Handle, Position, type NodeProps } from '@xyflow/svelte'
     import { onMount } from 'svelte'
-
+    import type { Scene } from '$lib/types/Scene'
     // Les infos sont déclarées ici, imaginons qu'on ai besoin d'un id ou autre
     let { data, id, positionAbsoluteX, positionAbsoluteY } =
         $props() as NodeProps
+
+    let scene = data.scene as Scene
 </script>
 
 <div class="node relative border border-border bg-card px-4 py-2">
     <!-- Ajout de l'ID du nœud -->
     <div class="text-xs text-muted-foreground mb-2">ID: {id}</div>
-
+    {#if scene}
+        <p>{scene.title ? scene.title : 'Scene'}</p>
+    {/if}
+    {#if !scene}
+        <p>Scene pas existante</p>
+    {/if}
     <div>
         Position
         {Math.round(positionAbsoluteX)}

@@ -8,5 +8,9 @@
 
 <!-- You need the SvelteFlowProvider so you can useSvelteFlow  -->
 <SvelteFlowProvider>
-    <Flow characters={data.characters} />
+    <Flow
+        characters={data.characters}
+        scenes={data.scenes}
+        db_nodes={data.nodes}
+    />
 </SvelteFlowProvider>
