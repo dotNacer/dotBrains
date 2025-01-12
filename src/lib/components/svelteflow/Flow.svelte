@@ -4,15 +4,16 @@
         useSvelteFlow,
         type OnConnectEnd,
         type Node,
+        type Edge as FlowEdge,
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
     import { get } from 'svelte/store'
 
     import { addNode, getLastNodeID } from '$lib/services/nodeService'
     import { nodes as nodesStore } from '$lib/stores/nodeStore'
+    import { edges as edgesStore } from '$lib/stores/edgeStore'
 
     import type { Scene } from '$lib/types/Scene'
-    import { edges } from '$lib/stores/edgeStore'
     import { nodeTypes } from '$lib'
     import type { Character } from '$lib/types/Character'
     import { onMount } from 'svelte'
@@ -21,15 +22,20 @@
         characters,
         scenes,
         db_nodes: initialNodes,
+        db_edges: initialEdges,
     } = $props<{
         characters: Character[]
         scenes: Scene[]
         db_nodes: Node[]
+        db_edges: FlowEdge[]
     }>()
 
     onMount(() => {
         if (initialNodes && initialNodes.length > 0) {
             nodesStore.set(initialNodes)
+        }
+        if (initialEdges && initialEdges.length > 0) {
+            edgesStore.set(initialEdges)
         }
     })
 
@@ -111,7 +117,7 @@
     <SvelteFlow
         nodes={nodesStore}
         {nodeTypes}
-        {edges}
+        edges={edgesStore}
         fitView
         fitViewOptions={{ padding: 2 }}
         onconnectend={handleConnectEnd}

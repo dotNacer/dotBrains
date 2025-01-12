@@ -1,18 +1,14 @@
 <script lang="ts">
     import { onMount, getContext } from 'svelte'
     import { scale } from 'svelte/transition'
-    import { type Edge } from '@xyflow/svelte'
     import { removeNode, updateNodeToCustom } from '$lib/services/nodeService'
     import { toast } from 'svelte-sonner'
     import SceneCreateForm from '$lib/components/forms/scene-create-form.svelte'
     import { superValidate } from 'sveltekit-superforms'
     import { zod } from 'sveltekit-superforms/adapters'
     import { formSchema } from '$lib/schemas/nodes'
-    import { enhance } from '$app/forms'
 
     let { id, data, positionAbsoluteX, positionAbsoluteY } = $props()
-
-    const addEdge = getContext<(edge: Edge) => void>('addEdge')
 
     // Expose closeMenu to parent
     $effect(() => {
@@ -58,16 +54,14 @@
         if (result.result.type === 'success') {
             wasTransformed = true
             const sceneData = result.result.data
-
-            const nodePosition = data.position || { x: 0, y: 0 }
-            const sceneId = sceneData.id
+            console.log(data)
 
             // Créer le formulaire pour le node
             const nodeForm = await superValidate(zod(formSchema))
             nodeForm.data = {
                 positionX: Math.round(positionAbsoluteX),
                 positionY: Math.round(positionAbsoluteY),
-                sceneId: sceneId,
+                sceneId: sceneData.id,
                 outgoingId: [],
                 incomingId: [],
                 properties: [],
@@ -82,6 +76,8 @@
             if (response.ok) {
                 toast.success('Node created successfully!')
                 updateNodeToCustom(id, sceneData)
+                // On devra potentiellement creer le edge ici
+                // OU l'ajouter dans la fonction addEdgeBetweenNodes (meilleure solution)
             } else {
                 toast.error('Failed to create node')
             }

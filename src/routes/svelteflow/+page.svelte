@@ -12,5 +12,6 @@
         characters={data.characters}
         scenes={data.scenes}
         db_nodes={data.nodes}
+        db_edges={data.edges}
     />
 </SvelteFlowProvider>

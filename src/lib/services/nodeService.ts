@@ -4,7 +4,6 @@ import { get } from 'svelte/store'
 import { nodes } from '$lib/stores/nodeStore'
 import type { Node, NodeTypes, XYPosition } from '@xyflow/svelte'
 import type { Handle } from '@xyflow/system'
-import { edges } from '$lib/stores/edgeStore'
 import { addEdgeBetweenNodes } from './edgeService'
 
 const prisma = new PrismaClient()
@@ -22,7 +21,7 @@ const prisma = new PrismaClient()
 export const addNode = <T extends Record<string, unknown>>(
     type: keyof NodeTypes,
     data: T,
-    position: XYPosition
+    position: XYPosition,
 ) => {
     /* 
     Infos importantes:

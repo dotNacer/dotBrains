@@ -4,18 +4,21 @@ import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { formSchema as FormSchemaScene } from '$lib/schemas/scenes'
 import type { CreateNodeDto } from '$lib/types/Node'
+import type { Edge } from '@prisma/client'
 
 import { nodes as nodesStore } from '$lib/stores/nodeStore'
 
 import { characterService } from '$lib/services/characterService'
 import { sceneService } from '$lib/services/sceneService'
 import { nodeService } from '$lib/services/nodeService'
+import { edgeService } from '$lib/services/edgeService'
 
-export const load: PageServerLoad = async () => {
-    const [characters, scenes, dbNodes] = await Promise.all([
-        characterService.getAll(),
+export const load: PageServerLoad = async ({ fetch }) => {
+    const [characters, scenes, dbNodes, dbEdges] = await Promise.all([
+        characterService.getAll(fetch),
         sceneService.getAll(),
         nodeService.getAll(),
+        edgeService.getAll(fetch),
     ])
 
     // Transform dbNodes into the format expected by SvelteFlow
@@ -34,11 +37,22 @@ export const load: PageServerLoad = async () => {
         },
     }))
 
+    // Transform dbEdges into the format expected by SvelteFlow
+    const flowEdges = (dbEdges as Edge[]).map((edge) => ({
+        id: `${edge.fromNodeId}-${edge.toNodeId}`,
+        source: edge.fromNodeId.toString(),
+        target: edge.toNodeId.toString(),
+        type: edge.type || 'smoothstep',
+        animated: edge.animated || false,
+        label: edge.label,
+    }))
+
     return {
         form: await superValidate(zod(FormSchemaScene)),
         characters,
         scenes,
-        nodes: flowNodes, // Send transformed nodes
+        nodes: flowNodes,
+        edges: flowEdges,
     }
 }
 
