@@ -8,15 +8,12 @@
     import '@friendofsvelte/tipex/styles/EditLink.css'
     import '@friendofsvelte/tipex/styles/CodeBlock.css'
 
-    import { noteService } from '$lib/services/noteService'
-    import { enhance } from '$app/forms'
+    import { TextAlign } from '@tiptap/extension-text-align'
 
     let { note } = $props<{ note: Note }>()
     let body = $state(note.content)
     let debounceTimer: ReturnType<typeof setTimeout>
     let saving = $state(false)
-
-    import { TextAlign } from '@tiptap/extension-text-align'
 
     const extensions = [
         TextAlign.configure({
@@ -25,6 +22,17 @@
     ]
 
     async function saveContent(content: string) {
+        if (note.id === -1) {
+            // Pour une nouvelle note, on met à jour le champ caché du formulaire
+            const contentInput = document.querySelector(
+                'input[name="content"]',
+            ) as HTMLInputElement
+            if (contentInput) {
+                contentInput.value = content
+            }
+            return
+        }
+
         try {
             saving = true
             const formData = new FormData()

@@ -5,8 +5,10 @@
     import { X } from 'lucide-svelte'
     import { crossfade, fade } from 'svelte/transition'
     import { cubicOut } from 'svelte/easing'
-    import TextEditor from './text-editor.svelte'
-    let { note } = $props<{ note: Note }>()
+    import NoteForm from './note-form.svelte'
+
+    let { note: initialNote } = $props<{ note: Note }>()
+    let note = $state<Note>(initialNote)
     let isOpen = $state(false)
     let cardElement = $state<HTMLElement | null>(null)
     let cardHeight = $state(0)
@@ -28,6 +30,18 @@
         },
     })
 
+    async function reloadNote() {
+        try {
+            const response = await fetch(`/notes/${note.id}`)
+            if (response.ok) {
+                const updatedNote = await response.json()
+                note = updatedNote
+            }
+        } catch (error) {
+            console.error('Error reloading note:', error)
+        }
+    }
+
     function toggleModal() {
         if (!isOpen && cardElement) {
             cardHeight = cardElement.offsetHeight
@@ -35,9 +49,14 @@
         isOpen = !isOpen
     }
 
+    async function handleClose() {
+        isOpen = false
+        await reloadNote()
+    }
+
     function handleBackdropClick(event: MouseEvent) {
         if (event.target === event.currentTarget) {
-            isOpen = false
+            handleClose()
         }
     }
 </script>
@@ -49,7 +68,7 @@
     {#if !isOpen}
         <div
             bind:this={cardElement}
-            class="flex bg-background flex-col gap-2 border p-4 rounded-md md:w-[350px] w-full cursor-pointer hover:border-primary transition-colors"
+            class="flex bg-background flex-col gap-2 border p-4 rounded-md md:w-[350px] w-full cursor-pointer hover:border-primary transition-colors h-32"
             onclick={toggleModal}
             in:receive={{ key: note.id }}
             out:send={{ key: note.id }}
@@ -83,19 +102,11 @@
             <Button
                 variant="ghost"
                 class="absolute right-4 top-4"
-                onclick={toggleModal}
+                onclick={handleClose}
             >
                 <X class="h-4 w-4" />
             </Button>
-            <div class="space-y-4">
-                <h2 class="font-semibold text-2xl">{note.title}</h2>
-                <TextEditor {note} />
-                <div class="flex gap-2">
-                    {#each note.tags as tag}
-                        <Badge>{tag}</Badge>
-                    {/each}
-                </div>
-            </div>
+            <NoteForm {note} onClose={handleClose} />
         </div>
     </div>
 {/if}
