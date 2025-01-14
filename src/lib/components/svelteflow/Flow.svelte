@@ -17,6 +17,7 @@
     import { nodeTypes } from '$lib'
     import type { Character } from '$lib/types/Character'
     import { onMount } from 'svelte'
+    import { edgeService } from '@/services/edgeService'
 
     let {
         characters,
@@ -111,6 +112,13 @@
             }
         }
     }
+
+    function handleDelete(event: any) {
+        const edges = event.edges as FlowEdge[]
+        for (const edge of edges) {
+            edgeService.delete(parseInt(edge.id))
+        }
+    }
 </script>
 
 <div class="wrapper">
@@ -121,9 +129,10 @@
         fitView
         fitViewOptions={{ padding: 2 }}
         onconnectend={handleConnectEnd}
+        ondelete={(e) => handleDelete(e)}
         on:paneclick={handlePaneClick}
         class="!bg-card"
-    ></SvelteFlow>
+    />
 </div>
 
 <style>

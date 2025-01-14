@@ -25,10 +25,10 @@ export const updateEdge = (id: string, edge: Edge) => {
 export const addEdgeBetweenNodes = async (
     source: string,
     target: string,
-    customFetch?: typeof fetch,
+    customFetch?: typeof fetch
 ) => {
     const edge: Edge = {
-        id: `${source}-${target}`,
+        id: Date.now().toString(),
         source: source,
         target: target,
         type: 'smoothstep',
@@ -60,6 +60,10 @@ export const addEdgeBetweenNodes = async (
 
         const dbEdge = await response.json()
         console.log('Edge created in database:', dbEdge)
+
+        // Update the edge id in the store to match the response id
+        edge.id = dbEdge.id
+        updateEdge(edge.id, edge) // Update the edge in the store with the new id
     } catch (error) {
         console.error('Failed to create edge in database:', error)
         // Optionally remove from store if database creation fails
@@ -88,7 +92,7 @@ export const edgeService = {
     update: async (
         id: number,
         data: Partial<CreateEdgeDto>,
-        customFetch?: typeof fetch,
+        customFetch?: typeof fetch
     ) => {
         const fetchInstance = customFetch || fetch
         const response = await fetchInstance('/api/edges', {
@@ -144,11 +148,11 @@ export const edgeService = {
     getByNodes: async (
         fromNodeId: number,
         toNodeId: number,
-        customFetch?: typeof fetch,
+        customFetch?: typeof fetch
     ) => {
         const fetchInstance = customFetch || fetch
         const response = await fetchInstance(
-            `/api/edges?fromNodeId=${fromNodeId}&toNodeId=${toNodeId}`,
+            `/api/edges?fromNodeId=${fromNodeId}&toNodeId=${toNodeId}`
         )
 
         if (!response.ok) {

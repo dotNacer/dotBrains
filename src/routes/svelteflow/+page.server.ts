@@ -15,7 +15,7 @@ import { edgeService } from '$lib/services/edgeService'
 
 export const load: PageServerLoad = async ({ fetch }) => {
     const [characters, scenes, dbNodes, dbEdges] = await Promise.all([
-        characterService.getAll(fetch),
+        characterService.getAll(),
         sceneService.getAll(),
         nodeService.getAll(),
         edgeService.getAll(fetch),
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 
     // Transform dbEdges into the format expected by SvelteFlow
     const flowEdges = (dbEdges as Edge[]).map((edge) => ({
-        id: `${edge.fromNodeId}-${edge.toNodeId}`,
+        id: edge.id,
         source: edge.fromNodeId.toString(),
         target: edge.toNodeId.toString(),
         type: edge.type || 'smoothstep',
