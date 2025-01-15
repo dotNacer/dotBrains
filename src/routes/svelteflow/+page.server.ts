@@ -4,7 +4,6 @@ import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { formSchema as FormSchemaScene } from '$lib/schemas/scenes'
 import type { CreateNodeDto } from '$lib/types/Node'
-import type { Edge } from '@prisma/client'
 
 import { nodes as nodesStore } from '$lib/stores/nodeStore'
 
@@ -22,7 +21,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
     ])
 
     // Transform dbNodes into the format expected by SvelteFlow
-    const flowNodes = dbNodes.map((node) => ({
+    const flowNodes = (dbNodes as any[]).map((node) => ({
         id: node.id.toString(),
         type: 'scene',
         position: {
@@ -38,7 +37,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
     }))
 
     // Transform dbEdges into the format expected by SvelteFlow
-    const flowEdges = (dbEdges as Edge[]).map((edge) => ({
+    const flowEdges = (dbEdges as any[]).map((edge) => ({
         id: edge.id,
         source: edge.fromNodeId.toString(),
         target: edge.toNodeId.toString(),

@@ -21,7 +21,7 @@ const prisma = new PrismaClient()
 export const addNode = <T extends Record<string, unknown>>(
     type: keyof NodeTypes,
     data: T,
-    position: XYPosition,
+    position: XYPosition
 ) => {
     /* 
     Infos importantes:
@@ -138,28 +138,17 @@ export const nodeService = {
         }
     },
 
-    delete: async (id: number) => {
-        try {
-            // First delete all edges connected to this node
-            await prisma.edge.deleteMany({
-                where: {
-                    OR: [{ fromNodeId: id }, { toNodeId: id }],
-                },
-            })
+    delete: async (id: number, customFetch?: typeof fetch) => {
+        const fetchInstance = customFetch || fetch
+        const response = await fetchInstance(`/api/nodes?id=${id}`, {
+            method: 'DELETE',
+        })
 
-            // Then delete the node
-            return await prisma.node.delete({
-                where: { id },
-                include: {
-                    scene: true,
-                    outgoing: true,
-                    incoming: true,
-                },
-            })
-        } catch (error) {
-            console.error('Error deleting node:', error)
-            throw error
+        if (!response.ok) {
+            throw new Error('Failed to delete node')
         }
+
+        return response.json()
     },
 
     getAll: async () => {

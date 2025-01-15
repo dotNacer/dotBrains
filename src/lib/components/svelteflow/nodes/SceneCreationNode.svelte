@@ -76,8 +76,6 @@
             if (response.ok) {
                 toast.success('Node created successfully!')
                 updateNodeToCustom(id, sceneData)
-                // On devra potentiellement creer le edge ici
-                // OU l'ajouter dans la fonction addEdgeBetweenNodes (meilleure solution)
             } else {
                 toast.error('Failed to create node')
             }

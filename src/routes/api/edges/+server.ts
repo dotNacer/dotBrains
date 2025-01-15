@@ -8,6 +8,23 @@ export async function POST({ request }: RequestEvent) {
     const data = await request.json()
 
     try {
+        // Vérifier si les nœuds source et destination existent
+        const [fromNode, toNode] = await Promise.all([
+            prisma.node.findUnique({ where: { id: data.fromNodeId } }),
+            prisma.node.findUnique({ where: { id: data.toNodeId } }),
+        ])
+
+        if (!fromNode || !toNode) {
+            return new Response(
+                JSON.stringify({
+                    error: 'Source or destination node not found',
+                    fromNodeExists: !!fromNode,
+                    toNodeExists: !!toNode,
+                }),
+                { status: 404 }
+            )
+        }
+
         const edge = await prisma.edge.create({
             data: {
                 fromNode: { connect: { id: data.fromNodeId } },
@@ -30,7 +47,7 @@ export async function POST({ request }: RequestEvent) {
             JSON.stringify({ error: 'Failed to create edge' }),
             {
                 status: 500,
-            },
+            }
         )
     }
 }
@@ -69,7 +86,7 @@ export async function GET({ url }: RequestEvent) {
             JSON.stringify({ error: 'Failed to fetch edges' }),
             {
                 status: 500,
-            },
+            }
         )
     }
 }
@@ -97,7 +114,7 @@ export async function DELETE({ url }: RequestEvent) {
             JSON.stringify({ error: 'Failed to delete edge' }),
             {
                 status: 500,
-            },
+            }
         )
     }
 }
@@ -134,7 +151,7 @@ export async function PATCH({ request }: RequestEvent) {
             JSON.stringify({ error: 'Failed to update edge' }),
             {
                 status: 500,
-            },
+            }
         )
     }
 }
