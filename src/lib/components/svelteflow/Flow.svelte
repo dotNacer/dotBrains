@@ -9,7 +9,11 @@
     import '@xyflow/svelte/dist/style.css'
     import { get } from 'svelte/store'
 
-    import { addNode, getLastNodeID } from '$lib/services/nodeService'
+    import {
+        addNode,
+        getLastNodeID,
+        nodeService,
+    } from '$lib/services/nodeService'
     import { nodes as nodesStore } from '$lib/stores/nodeStore'
     import { edges as edgesStore } from '$lib/stores/edgeStore'
 
@@ -117,6 +121,12 @@
         const edges = event.edges as FlowEdge[]
         for (const edge of edges) {
             edgeService.delete(parseInt(edge.id))
+        }
+
+        const nodes = event.nodes as Node[]
+        for (const node of nodes) {
+            // console.log('node', node)
+            nodeService.delete(parseInt(node.id))
         }
     }
 </script>
