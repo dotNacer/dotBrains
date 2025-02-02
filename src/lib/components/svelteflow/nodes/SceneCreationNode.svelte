@@ -109,7 +109,6 @@
 </script>
 
 {#if mounted && formData.form}
-    {id}
     <div
         transition:scale={{ duration: 200, start: 0.95 }}
         class="border p-4 w-[400px] bg-background"
