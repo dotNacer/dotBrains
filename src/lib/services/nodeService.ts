@@ -53,6 +53,13 @@ export const updateNode = (id: string, node: Node) => {
     nodes.update((nodes) => nodes.map((n) => (n.id === id ? node : n)))
 }
 
+export const updateNodeId = (id: string, newId: string) => {
+    console.log("Passage de l'id", id, 'à', newId)
+    nodes.update((nodes) =>
+        nodes.map((n) => (n.id === id ? { ...n, id: newId } : n))
+    )
+}
+
 export const updateNodeToCustom = (id: string, sceneData?: Scene) => {
     const existingNode = get(nodes).find((n) => n.id === id)
     if (!existingNode) return
@@ -69,9 +76,21 @@ export const updateNodeToCustom = (id: string, sceneData?: Scene) => {
 
     const fromHandle = existingNode.data?.fromHandle as Handle | undefined
     if (fromHandle?.type === 'source') {
-        addEdgeBetweenNodes(fromHandle.nodeId ?? '1', id)
+        console.log(
+            'Source type : ',
+            typeof fromHandle.nodeId,
+            ' | Target :',
+            typeof id
+        )
+        addEdgeBetweenNodes(fromHandle.nodeId ?? '1', id.toString())
     } else if (fromHandle?.type === 'target') {
-        addEdgeBetweenNodes(id, fromHandle.nodeId ?? '1')
+        console.log(
+            'Source type : ',
+            typeof fromHandle.nodeId,
+            ' | Target :',
+            typeof id
+        )
+        addEdgeBetweenNodes(id.toString(), fromHandle.nodeId ?? '1')
     }
 }
 

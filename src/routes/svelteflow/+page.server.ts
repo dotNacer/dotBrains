@@ -65,6 +65,7 @@ export const actions: Actions = {
             return {
                 success: true,
                 message: 'Node created successfully!',
+                node_id: node.id,
             }
         } catch (error) {
             console.error('Error in create node action:', error)
