@@ -1,7 +1,11 @@
 <script lang="ts">
     import { onMount, getContext } from 'svelte'
     import { scale } from 'svelte/transition'
-    import { removeNode, updateNodeToCustom } from '$lib/services/nodeService'
+    import {
+        removeNode,
+        updateNodeToCustom,
+        updateNodeId,
+    } from '$lib/services/nodeService'
     import { toast } from 'svelte-sonner'
     import SceneCreateForm from '$lib/components/forms/scene-create-form.svelte'
     import { superValidate } from 'sveltekit-superforms'
@@ -54,7 +58,6 @@
         if (result.result.type === 'success') {
             wasTransformed = true
             const sceneData = result.result.data
-            console.log(data)
 
             // Créer le formulaire pour le node
             const nodeForm = await superValidate(zod(formSchema))
@@ -73,9 +76,18 @@
                 body: JSON.stringify(nodeForm.data),
             })
 
+            const responseData = await response.json()
+
             if (response.ok) {
                 toast.success('Node created successfully!')
-                updateNodeToCustom(id, sceneData)
+                // Parser la réponse qui est une chaîne JSON
+                const parsedData = JSON.parse(responseData.data)
+                // L'ID du node se trouve à l'index 3 du tableau
+                const nodeId = parsedData[3].toString()
+
+                updateNodeId(id, nodeId)
+
+                updateNodeToCustom(nodeId, sceneData)
             } else {
                 toast.error('Failed to create node')
             }

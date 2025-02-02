@@ -7,8 +7,7 @@
         type Edge as FlowEdge,
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
-    import { get } from 'svelte/store'
-
+    import { Button } from '$lib/components/ui/button'
     import {
         addNode,
         getLastNodeID,
@@ -22,7 +21,7 @@
     import type { Character } from '$lib/types/Character'
     import { onMount } from 'svelte'
     import { edgeService } from '@/services/edgeService'
-
+    import { get } from 'svelte/store'
     let {
         characters,
         scenes,
