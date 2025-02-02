@@ -83,7 +83,7 @@
                 // Parser la réponse qui est une chaîne JSON
                 const parsedData = JSON.parse(responseData.data)
                 // L'ID du node se trouve à l'index 3 du tableau
-                const nodeId = parsedData[3]
+                const nodeId = parsedData[3].toString()
 
                 updateNodeId(id, nodeId)
 

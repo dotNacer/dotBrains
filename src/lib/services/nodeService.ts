@@ -54,7 +54,7 @@ export const updateNode = (id: string, node: Node) => {
 }
 
 export const updateNodeId = (id: string, newId: string) => {
-    console.log("Passage de l'id", id, 'à', newId)
+    console.log("Passage de l'id", id, 'à', newId.toString())
     nodes.update((nodes) =>
         nodes.map((n) => (n.id === id ? { ...n, id: newId } : n))
     )

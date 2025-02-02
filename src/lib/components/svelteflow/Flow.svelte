@@ -7,8 +7,7 @@
         type Edge as FlowEdge,
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
-    import { get } from 'svelte/store'
-
+    import { Button } from '$lib/components/ui/button'
     import {
         addNode,
         getLastNodeID,
@@ -22,7 +21,7 @@
     import type { Character } from '$lib/types/Character'
     import { onMount } from 'svelte'
     import { edgeService } from '@/services/edgeService'
-
+    import { get } from 'svelte/store'
     let {
         characters,
         scenes,
@@ -129,9 +128,23 @@
             nodeService.delete(parseInt(node.id))
         }
     }
+
+    function logs() {
+        console.log(
+            'Dernier edge : ',
+            get(edgesStore)[get(edgesStore).length - 1],
+        )
+        console.log(
+            'Dernier node : ',
+            get(nodesStore)[get(nodesStore).length - 1],
+        )
+    }
 </script>
 
 <div class="wrapper">
+    <Button onclick={logs}>Logs</Button>
+    <Button onclick={() => console.log(get(edgesStore))}>Log edges</Button>
+    <Button onclick={() => console.log(get(nodesStore))}>Log nodes</Button>
     <SvelteFlow
         nodes={nodesStore}
         {nodeTypes}
