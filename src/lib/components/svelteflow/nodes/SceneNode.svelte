@@ -13,6 +13,7 @@
     <!-- Ajout de l'ID du nœud -->
     <div class="text-xs text-muted-foreground mb-2">ID: {id}</div>
     {#if scene}
+        <p>ID Scene :{scene.id}</p>
         <p>{scene.title ? scene.title : 'Scene'}</p>
     {/if}
     {#if !scene}

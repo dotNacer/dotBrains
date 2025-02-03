@@ -12,7 +12,7 @@ model Scene {
   title       String
   description String
   characters  CharactersOnScenes[]
-  node        Node?
+  nodes       Node[]
 }
 
 model Character {
@@ -27,7 +27,7 @@ model CharactersOnScenes {
   characterId Int
   sceneId     Int
   character   Character @relation(fields: [characterId], references: [id])
-  scene       Scene     @relation(fields: [sceneId], references: [id])
+  scene       Scene     @relation(fields: [sceneId], references: [id], onDelete: Cascade)
 
   @@id([characterId, sceneId])
 }
@@ -57,7 +57,7 @@ model Node {
   positionX   Float
   positionY   Float
   sceneId     Int?      @unique
-  scene       Scene?    @relation(fields: [sceneId], references: [id])
+  scene       Scene?    @relation(fields: [sceneId], references: [id], onDelete: Cascade)
 
   outgoing    Edge[]    @relation("FromNode")
   incoming    Edge[]    @relation("ToNode")

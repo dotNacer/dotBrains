@@ -10,7 +10,6 @@ import type { CreateEdgeDto } from '$lib/types/Edge'
  * @param edge - The edge to add.
  */
 export const addEdge = (edge: Edge) => {
-    console.log('adding edge', edge)
     edges.update((e) => [...e, edge])
 }
 

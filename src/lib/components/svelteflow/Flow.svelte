@@ -3,11 +3,10 @@
         SvelteFlow,
         useSvelteFlow,
         type OnConnectEnd,
-        type Node,
         type Edge as FlowEdge,
+        type Node,
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
-    import { Button } from '$lib/components/ui/button'
     import {
         addNode,
         getLastNodeID,
@@ -21,7 +20,6 @@
     import type { Character } from '$lib/types/Character'
     import { onMount } from 'svelte'
     import { edgeService } from '@/services/edgeService'
-    import { get } from 'svelte/store'
     let {
         characters,
         scenes,
@@ -116,16 +114,32 @@
         }
     }
 
-    function handleDelete(event: any) {
+    async function handleDelete(event: any) {
         const edges = event.edges as FlowEdge[]
         for (const edge of edges) {
             edgeService.delete(parseInt(edge.id))
         }
 
         const nodes = event.nodes as Node[]
+        // Extract scene IDs from nodes that have a scene property
+        const scenes = nodes
+            .filter((node: any) => node.data?.scene?.id)
+            .map((node: any) => node.data.scene.id)
+
+        // Delete nodes
         for (const node of nodes) {
-            // console.log('node', node)
             nodeService.delete(parseInt(node.id))
+        }
+
+        // Delete scenes
+        for (const sceneId of scenes) {
+            console.log('deleting scene', sceneId)
+            const response = await fetch(`/api/scenes?id=${sceneId}`, {
+                method: 'DELETE',
+            })
+            if (!response.ok) {
+                console.error('Failed to delete scene:', response.statusText)
+            }
         }
     }
 </script>
