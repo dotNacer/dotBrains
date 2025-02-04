@@ -20,6 +20,8 @@
     import type { Character } from '$lib/types/Character'
     import { onMount } from 'svelte'
     import { edgeService } from '@/services/edgeService'
+    import { sceneCreationStore } from '$lib/stores/sceneCreationStore'
+    import { get } from 'svelte/store'
     let {
         characters,
         scenes,
@@ -63,13 +65,14 @@
             return
         }
 
-        if (isMenuOpened) {
-            if (menuNodeRef?.closeMenu) {
-                menuNodeRef.closeMenu()
-            }
-            menuNodeRef = null
-            menuNodeId = null
-            isMenuOpened = false
+        const currentState = get(sceneCreationStore)
+        if (currentState.isOpen) {
+            currentState.nodeRef?.closeMenu?.()
+            sceneCreationStore.set({
+                isOpen: false,
+                nodeId: null,
+                nodeRef: null,
+            })
         }
 
         const { clientX, clientY } =
@@ -103,6 +106,16 @@
 
     function handlePaneClick() {
         if (isConnecting) return
+
+        const currentState = get(sceneCreationStore)
+        if (currentState.isOpen) {
+            currentState.nodeRef?.closeMenu?.()
+            sceneCreationStore.set({
+                isOpen: false,
+                nodeId: null,
+                nodeRef: null,
+            })
+        }
 
         if (isMenuOpened) {
             if (menuNodeRef?.closeMenu) {
@@ -190,7 +203,7 @@
         on:paneclick={handlePaneClick}
         class="!bg-card"
     >
-        <FlowOptions />
+        <FlowOptions {characters} />
     </SvelteFlow>
 </div>
 
