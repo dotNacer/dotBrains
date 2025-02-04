@@ -13,7 +13,6 @@
     let debounceTimer: ReturnType<typeof setTimeout>
 
     import { TextAlign } from '@tiptap/extension-text-align'
-    import { Mention } from '@tiptap/extension-mention'
     const extensions = [
         TextAlign.configure({
             types: ['heading', 'paragraph'],

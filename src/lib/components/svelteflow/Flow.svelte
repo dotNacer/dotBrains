@@ -14,7 +14,7 @@
     } from '$lib/services/nodeService'
     import { nodes as nodesStore } from '$lib/stores/nodeStore'
     import { edges as edgesStore } from '$lib/stores/edgeStore'
-
+    import FlowOptions from '$lib/components/svelteflow/FlowOptions.svelte'
     import type { Scene } from '$lib/types/Scene'
     import { nodeTypes } from '$lib'
     import type { Character } from '$lib/types/Character'
@@ -142,6 +142,39 @@
             }
         }
     }
+
+    let dragDebounceTimer: ReturnType<typeof setTimeout>
+
+    async function handleNodeDrag(e: any) {
+        let draggedNodes = e.detail.nodes as Node[]
+
+        clearTimeout(dragDebounceTimer)
+        dragDebounceTimer = setTimeout(async () => {
+            for (const node of draggedNodes) {
+                try {
+                    const response = await fetch('/api/nodes', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: node.id,
+                            positionX: node.position.x,
+                            positionY: node.position.y,
+                        }),
+                    })
+
+                    if (!response.ok) {
+                        console.error('Failed to update node position')
+                    }
+
+                    console.log('updated node position', node.id, node.position)
+                } catch (error) {
+                    console.error('Error updating node position:', error)
+                }
+            }
+        }, 1000)
+    }
 </script>
 
 <div class="wrapper">
@@ -153,9 +186,12 @@
         fitViewOptions={{ padding: 2 }}
         onconnectend={handleConnectEnd}
         ondelete={(e) => handleDelete(e)}
+        on:nodedrag={handleNodeDrag}
         on:paneclick={handlePaneClick}
         class="!bg-card"
-    />
+    >
+        <FlowOptions />
+    </SvelteFlow>
 </div>
 
 <style>
