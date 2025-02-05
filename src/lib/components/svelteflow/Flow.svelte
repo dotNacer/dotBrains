@@ -35,6 +35,7 @@
     }>()
 
     onMount(() => {
+        console.log(initialNodes)
         if (initialNodes && initialNodes.length > 0) {
             nodesStore.set(initialNodes)
         }
@@ -188,6 +189,49 @@
             }
         }, 1000)
     }
+
+    function handlePaneContextMenu(e: any) {
+        // Cancel le menu contextuel par défaut
+
+        e.detail.event.preventDefault()
+
+        console.log(e.detail.event.layerX, e.detail.event.layerY)
+        const currentState = get(sceneCreationStore)
+        if (currentState.isOpen) {
+            currentState.nodeRef?.closeMenu?.()
+            sceneCreationStore.set({
+                isOpen: false,
+                nodeId: null,
+                nodeRef: null,
+            })
+        }
+
+        const position = screenToFlowPosition({
+            x: e.detail.event.layerX + 100,
+            y: e.detail.event.layerY,
+        })
+
+        // Créer un nouveau node de création de scène
+        const newNodeId = addNode(
+            'scene-creation',
+            {
+                ref: (node: any) => {
+                    sceneCreationStore.update((state) => ({
+                        ...state,
+                        nodeRef: node,
+                    }))
+                },
+                characters,
+            },
+            position,
+        )
+
+        sceneCreationStore.set({
+            isOpen: true,
+            nodeId: newNodeId,
+            nodeRef: null,
+        })
+    }
 </script>
 
 <div class="wrapper">
@@ -201,6 +245,7 @@
         ondelete={(e) => handleDelete(e)}
         on:nodedrag={handleNodeDrag}
         on:paneclick={handlePaneClick}
+        on:panecontextmenu={handlePaneContextMenu}
         class="!bg-card"
     >
         <FlowOptions {characters} />

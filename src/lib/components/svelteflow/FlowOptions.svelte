@@ -24,8 +24,8 @@
 
         // Get the center of the viewport
         const centerPosition = screenToFlowPosition({
-            x: window.innerWidth / 2,
-            y: window.innerHeight / 2,
+            x: window.innerWidth / 3,
+            y: window.innerHeight / 3,
         })
 
         const newNodeId = addNode(

@@ -2,6 +2,7 @@
     import { Handle, Position, type NodeProps } from '@xyflow/svelte'
     import { onMount } from 'svelte'
     import type { Scene } from '$lib/types/Scene'
+    import { Badge } from '$lib/components/ui/badge'
     // Les infos sont déclarées ici, imaginons qu'on ai besoin d'un id ou autre
     let { data, id, positionAbsoluteX, positionAbsoluteY } =
         $props() as NodeProps
@@ -9,30 +10,22 @@
     let scene = data.scene as Scene
 </script>
 
-<div class="node relative border border-border bg-card px-4 py-2">
+<div
+    class="node relative border border-border bg-card px-4 py-2 w-80 space-y-2"
+>
     <!-- Ajout de l'ID du nœud -->
-    <div class="text-xs text-muted-foreground mb-2">ID: {id}</div>
     {#if scene}
-        <p>ID Scene :{scene.id}</p>
-        <p>{scene.title ? scene.title : 'Scene'}</p>
+        <h1 class="text-lg font-bold">{scene.title ? scene.title : 'Scene'}</h1>
+        <p class="text-sm">{scene.description ? scene.description : ''}</p>
+        <div class="flex flex-wrap gap-2">
+            {#each scene.characters as character}
+                <Badge variant="outline">{character.character.name}</Badge>
+            {/each}
+        </div>
     {/if}
     {#if !scene}
         <p>Scene pas existante</p>
     {/if}
-    <div>
-        Position
-        {Math.round(positionAbsoluteX)}
-        {Math.round(positionAbsoluteY)}
-    </div>
-    <div class="flex">
-        <div class="flex items-center justify-center rounded-full bg-muted">
-            {data.emoji}
-        </div>
-        <div class="ml-2">
-            <div class="text-lg font-bold">{data.name}</div>
-            <div class="text-sm text-muted-foreground">{data.job}</div>
-        </div>
-    </div>
 
     <Handle
         id={`target-${id}`}

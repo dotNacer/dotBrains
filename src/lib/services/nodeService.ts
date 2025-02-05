@@ -118,7 +118,15 @@ export const nodeService = {
                     properties: data.properties,
                 },
                 include: {
-                    scene: true,
+                    scene: {
+                        include: {
+                            characters: {
+                                include: {
+                                    character: true,
+                                },
+                            },
+                        },
+                    },
                     outgoing: true,
                     incoming: true,
                 },
@@ -174,13 +182,21 @@ export const nodeService = {
         try {
             const dbNodes = await prisma.node.findMany({
                 include: {
-                    scene: true,
+                    scene: {
+                        include: {
+                            characters: {
+                                include: {
+                                    character: true,
+                                },
+                            },
+                        },
+                    },
                     outgoing: true,
                     incoming: true,
                 },
             })
 
-            return dbNodes // Return raw database nodes
+            return dbNodes
         } catch (error) {
             console.error('Error fetching nodes:', error)
             throw error
@@ -192,7 +208,15 @@ export const nodeService = {
             return await prisma.node.findUnique({
                 where: { id },
                 include: {
-                    scene: true,
+                    scene: {
+                        include: {
+                            characters: {
+                                include: {
+                                    character: true,
+                                },
+                            },
+                        },
+                    },
                     outgoing: true,
                     incoming: true,
                 },
@@ -208,7 +232,15 @@ export const nodeService = {
             return await prisma.node.findUnique({
                 where: { sceneId },
                 include: {
-                    scene: true,
+                    scene: {
+                        include: {
+                            characters: {
+                                include: {
+                                    character: true,
+                                },
+                            },
+                        },
+                    },
                     outgoing: true,
                     incoming: true,
                 },
