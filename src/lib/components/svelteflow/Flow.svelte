@@ -7,6 +7,7 @@
         type Node,
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
+    import ConnectionLine from '$lib/components/svelteflow/ConnectionLine.svelte'
     import {
         addNode,
         getLastNodeID,
@@ -249,6 +250,7 @@
         class="!bg-card"
     >
         <FlowOptions {characters} />
+        <ConnectionLine slot="connectionLine" />
     </SvelteFlow>
 </div>
 
