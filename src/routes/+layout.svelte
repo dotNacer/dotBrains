@@ -45,6 +45,10 @@
             document.documentElement.classList.remove('dark')
         }
     })
+
+    // current path doit être égal a tout ce qui est avant le deuxiem slash = /characters
+    let currentPath = $derived($page.url.pathname.split('/')[1])
+    $inspect(currentPath)
 </script>
 
 <div class="min-h-screen bg-background text-foreground flex">
@@ -70,8 +74,8 @@
             {#each navigationLinks as { href, icon: Icon, label }}
                 <a
                     {href}
-                    class="flex items-center p-2 hover:opacity-80 {$page.url
-                        .pathname === href
+                    class="flex items-center p-2 hover:opacity-80 {currentPath ===
+                    href.split('/')[1]
                         ? 'bg-primary text-primary-foreground'
                         : ''}
                         {isExpanded ? 'w-full' : 'w-8 h-8'}"

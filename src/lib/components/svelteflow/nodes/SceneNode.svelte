@@ -19,7 +19,9 @@
         <p class="text-sm">{scene.description ? scene.description : ''}</p>
         <div class="flex flex-wrap gap-2">
             {#each scene.characters as character}
-                <Badge variant="outline">{character.character.name}</Badge>
+                <a href={`/characters/${character.character.id}`}>
+                    <Badge variant="outline">{character.character.name}</Badge>
+                </a>
             {/each}
         </div>
     {/if}
