@@ -18,4 +18,9 @@ const initialEdges: Edge[] = [
     },
 ]
 
+export const defaultEdgeOptions = {
+    type: 'smoothstep', // Set default edge type to smoothstep
+    animated: true,
+}
+
 export const edges = writable<Edge[]>(initialEdges)

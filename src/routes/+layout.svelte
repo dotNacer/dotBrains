@@ -48,7 +48,6 @@
 
     // current path doit être égal a tout ce qui est avant le deuxiem slash = /characters
     let currentPath = $derived($page.url.pathname.split('/')[1])
-    $inspect(currentPath)
 </script>
 
 <div class="min-h-screen bg-background text-foreground flex">

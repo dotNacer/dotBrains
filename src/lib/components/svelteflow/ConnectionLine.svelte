@@ -1,12 +1,24 @@
 <script lang="ts">
-    import { useConnection } from '@xyflow/svelte'
+    import { useConnection, getSmoothStepPath } from '@xyflow/svelte'
 
     const connection = useConnection()
 
-    let path = $derived.by(() => {
-        const { from, to } = $connection
-        return `M${from?.x},${from?.y} C ${to?.x} ${from?.y} ${from?.x} ${to?.y} ${to?.x},${to?.y}`
-    })
+    // Make the destructured values reactive with $derived
+    let { from, to, fromPosition, toPosition } = $derived($connection)
+
+    // Separate path calculation into its own $derived
+    let path = $derived(
+        from && to
+            ? getSmoothStepPath({
+                  sourceX: from.x,
+                  sourceY: from.y,
+                  sourcePosition: fromPosition ?? undefined,
+                  targetX: to.x,
+                  targetY: to.y,
+                  targetPosition: toPosition ?? undefined,
+              })[0]
+            : null,
+    )
 </script>
 
 {#if path}

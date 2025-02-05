@@ -14,7 +14,10 @@
         nodeService,
     } from '$lib/services/nodeService'
     import { nodes as nodesStore } from '$lib/stores/nodeStore'
-    import { edges as edgesStore } from '$lib/stores/edgeStore'
+    import {
+        edges as edgesStore,
+        defaultEdgeOptions,
+    } from '$lib/stores/edgeStore'
     import FlowOptions from '$lib/components/svelteflow/FlowOptions.svelte'
     import type { Scene } from '$lib/types/Scene'
     import { nodeTypes } from '$lib'
@@ -247,6 +250,7 @@
         on:nodedrag={handleNodeDrag}
         on:paneclick={handlePaneClick}
         on:panecontextmenu={handlePaneContextMenu}
+        {defaultEdgeOptions}
         class="!bg-card"
     >
         <FlowOptions {characters} />
