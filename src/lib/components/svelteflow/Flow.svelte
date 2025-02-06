@@ -8,11 +8,7 @@
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
     import ConnectionLine from '$lib/components/svelteflow/ConnectionLine.svelte'
-    import {
-        addNode,
-        getLastNodeID,
-        nodeService,
-    } from '$lib/services/nodeService'
+    import { addNode, nodeService } from '$lib/services/nodeService'
     import { nodes as nodesStore } from '$lib/stores/nodeStore'
     import {
         edges as edgesStore,
@@ -66,10 +62,28 @@
     }
 
     const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
-        if (connectionState.isValid) {
-            return
+        let isConnectingToANode = connectionState.isValid
+        if (isConnectingToANode) {
+            const fromId = connectionState.fromHandle?.nodeId
+            const toId = connectionState.toHandle?.nodeId
+            if (fromId && toId) {
+                createEdge(fromId, toId)
+            }
+        } else {
+            createSceneNode(event, connectionState)
         }
+    }
 
+    function createEdge(fromID: string, toId: string) {
+        edgeService.create({
+            fromNodeId: parseInt(fromID),
+            toNodeId: parseInt(toId),
+            type: 'smoothstep',
+            animated: true,
+        })
+    }
+
+    function createSceneNode(event: any, connectionState: any) {
         const currentState = get(sceneCreationStore)
         if (currentState.isOpen) {
             currentState.nodeRef?.closeMenu?.()
