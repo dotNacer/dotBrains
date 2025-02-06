@@ -122,4 +122,14 @@ export const characterService = {
             throw error
         }
     },
+    getById: async (id: number) => {
+        try {
+            return await prisma.character.findUnique({
+                where: { id },
+            })
+        } catch (error) {
+            console.error('Error fetching character by ID:', error)
+            throw error
+        }
+    },
 }

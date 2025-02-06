@@ -7,13 +7,17 @@
         type Node,
     } from '@xyflow/svelte'
     import '@xyflow/svelte/dist/style.css'
+    import ConnectionLine from '$lib/components/svelteflow/ConnectionLine.svelte'
     import {
         addNode,
         getLastNodeID,
         nodeService,
     } from '$lib/services/nodeService'
     import { nodes as nodesStore } from '$lib/stores/nodeStore'
-    import { edges as edgesStore } from '$lib/stores/edgeStore'
+    import {
+        edges as edgesStore,
+        defaultEdgeOptions,
+    } from '$lib/stores/edgeStore'
     import FlowOptions from '$lib/components/svelteflow/FlowOptions.svelte'
     import type { Scene } from '$lib/types/Scene'
     import { nodeTypes } from '$lib'
@@ -78,9 +82,8 @@
 
         const { clientX, clientY } =
             'changedTouches' in event ? event.changedTouches[0] : event
-        const id = getLastNodeID() ?? '1'
 
-        menuNodeId = id
+        menuNodeId = '-1'
         isConnecting = true
 
         addNode(
@@ -96,6 +99,7 @@
                 x: clientX,
                 y: clientY,
             }),
+            '-1',
         )
 
         isMenuOpened = true
@@ -191,11 +195,8 @@
     }
 
     function handlePaneContextMenu(e: any) {
-        // Cancel le menu contextuel par défaut
-
         e.detail.event.preventDefault()
 
-        console.log(e.detail.event.layerX, e.detail.event.layerY)
         const currentState = get(sceneCreationStore)
         if (currentState.isOpen) {
             currentState.nodeRef?.closeMenu?.()
@@ -211,8 +212,7 @@
             y: e.detail.event.layerY,
         })
 
-        // Créer un nouveau node de création de scène
-        const newNodeId = addNode(
+        addNode(
             'scene-creation',
             {
                 ref: (node: any) => {
@@ -224,11 +224,12 @@
                 characters,
             },
             position,
+            '-1',
         )
 
         sceneCreationStore.set({
             isOpen: true,
-            nodeId: newNodeId,
+            nodeId: '-1',
             nodeRef: null,
         })
     }
@@ -246,9 +247,11 @@
         on:nodedrag={handleNodeDrag}
         on:paneclick={handlePaneClick}
         on:panecontextmenu={handlePaneContextMenu}
+        {defaultEdgeOptions}
         class="!bg-card"
     >
         <FlowOptions {characters} />
+        <ConnectionLine slot="connectionLine" />
     </SvelteFlow>
 </div>
 

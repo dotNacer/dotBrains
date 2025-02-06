@@ -40,18 +40,19 @@
                 characters,
             },
             centerPosition,
+            '-1',
         )
 
         sceneCreationStore.set({
             isOpen: true,
-            nodeId: newNodeId,
+            nodeId: '-1',
             nodeRef: null,
         })
     }
 </script>
 
 <div class="absolute bottom-0 w-full flex justify-center items-center">
-    <div class="bg-[var(--base)] p-4 rounded-xl border-[1px] mb-4 z-30">
+    <div class="bg-card p-4 rounded-xl border-[1px] mb-4 z-30">
         <Button variant="outline" class="gap-2 z-30"
             ><Undo2 class="w-4 h-4" />Undo</Button
         >

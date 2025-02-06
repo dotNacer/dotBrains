@@ -7,6 +7,8 @@
     import { formSchema } from '$lib/schemas/scenes'
     import { Button } from '$lib/components/ui/button'
     import type { Character } from '$lib/types/Character'
+    import { goto } from '$app/navigation'
+    import { Badge } from '$lib/components/ui/badge'
 
     let { scene, editForm, characters } = $props<{
         scene: Scene
@@ -24,21 +26,23 @@
 </script>
 
 <div
-    class="border border-border p-4 w-[400px] bg-background relative group"
-    class:h-[100px]={!isEditing}
-    onclick={() => !isEditing && (isExpanded = !isExpanded)}
+    class="border border-border p-4 w-[400px] bg-background relative group space-y-2 cursor-pointer"
+    class:h-[125px]={!isEditing}
+    onclick={() => goto(`/scenes/${scene.id}`)}
     role="presentation"
     in:fly={{ y: -100, duration: 150 }}
     out:fly={{ y: 100, duration: 150 }}
 >
     {#if !isEditing}
         <h3 class="font-medium text-xl">{scene.title}</h3>
-        <p class="">{scene.description}</p>
-        <p class="text-sm text-muted-foreground">
-            {#each scene.characters as characterRelation}
-                {characterRelation.character.name}
+        <p class="truncate text-base leading-6">{scene.description}</p>
+        <div class="flex flex-wrap gap-2">
+            {#each scene.characters as character}
+                <a href={`/characters/${character.character.id}`}>
+                    <Badge variant="outline">{character.character.name}</Badge>
+                </a>
             {/each}
-        </p>
+        </div>
 
         <div
             class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"
@@ -66,7 +70,10 @@
         </div>
     {:else}
         <Button
-            onclick={() => (isEditing = false)}
+            onclick={(e) => {
+                e.stopPropagation()
+                isEditing = false
+            }}
             variant="link"
             class="absolute top-2 right-2"
         >
