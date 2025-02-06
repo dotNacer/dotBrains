@@ -21,7 +21,8 @@ const prisma = new PrismaClient()
 export const addNode = <T extends Record<string, unknown>>(
     type: keyof NodeTypes,
     data: T,
-    position: XYPosition
+    position: XYPosition,
+    specificId?: string
 ) => {
     /* 
     Infos importantes:
@@ -30,7 +31,8 @@ export const addNode = <T extends Record<string, unknown>>(
     - type: "source" ou "target"
     
     */
-    const newId = (parseInt(getLastNodeID() ?? '1') + 1).toString()
+    const newId =
+        specificId ?? (parseInt(getLastNodeID() ?? '1') + 1).toString()
     const node = { id: newId, type, data, position } as Node
     nodes.update((nodes) => [...nodes, node])
     return newId

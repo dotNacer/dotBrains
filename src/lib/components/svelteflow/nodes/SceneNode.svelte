@@ -15,6 +15,7 @@
 >
     <!-- Ajout de l'ID du nœud -->
     {#if scene}
+        {id}
         <h1 class="text-lg font-bold">{scene.title ? scene.title : 'Scene'}</h1>
         <p class="text-sm">{scene.description ? scene.description : ''}</p>
         <div class="flex flex-wrap gap-2">

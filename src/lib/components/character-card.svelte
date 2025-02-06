@@ -7,6 +7,7 @@
     import { formSchema } from '$lib/schemas/characters'
     import { Button } from '$lib/components/ui/button'
     import type { Scene } from '$lib/types/Scene'
+    import { goto } from '$app/navigation'
 
     let { character, editForm, scenes } = $props<{
         character: Character
@@ -24,10 +25,10 @@
 </script>
 
 <div
-    class="border border-border p-4 w-[400px] bg-background relative group"
+    class="border border-border p-4 w-[400px] bg-background relative group cursor-pointer"
     class:h-[100px]={!isEditing}
-    onclick={() => !isEditing && (isExpanded = !isExpanded)}
     role="presentation"
+    onclick={() => goto(`/characters/${character.id}`)}
     in:fly={{ y: -100, duration: 150 }}
     out:fly={{ y: 100, duration: 150 }}
 >
@@ -66,7 +67,10 @@
         </div>
     {:else}
         <Button
-            onclick={() => (isEditing = false)}
+            onclick={(e) => {
+                e.stopPropagation()
+                isEditing = false
+            }}
             variant="link"
             class="absolute top-2 right-2"
         >

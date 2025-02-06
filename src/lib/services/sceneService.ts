@@ -109,4 +109,22 @@ export const sceneService = {
             throw error
         }
     },
+
+    getById: async (id: number) => {
+        try {
+            return await prisma.scene.findUnique({
+                where: { id },
+                include: {
+                    characters: {
+                        include: {
+                            character: true,
+                        },
+                    },
+                },
+            })
+        } catch (error) {
+            console.error('Error fetching scene by ID:', error)
+            throw error
+        }
+    },
 }

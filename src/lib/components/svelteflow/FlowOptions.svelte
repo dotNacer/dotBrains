@@ -40,11 +40,12 @@
                 characters,
             },
             centerPosition,
+            '-1',
         )
 
         sceneCreationStore.set({
             isOpen: true,
-            nodeId: newNodeId,
+            nodeId: '-1',
             nodeRef: null,
         })
     }
