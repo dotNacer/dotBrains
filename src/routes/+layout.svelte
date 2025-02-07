@@ -57,6 +57,10 @@
             isExpanded ? 'w-64' : 'w-16'
         } flex flex-col`}
     >
+        <div class="title border-b">
+            <h1 class="text-3xl font-extrabold font-title">dotBrains</h1>
+        </div>
+
         <button
             class="mb-8 p-2 hover:bg-muted-foreground/20 rounded-lg"
             onclick={() => (isExpanded = !isExpanded)}

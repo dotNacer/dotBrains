@@ -1,8 +1,9 @@
 <script lang="ts">
     import { Handle, Position, type NodeProps } from '@xyflow/svelte'
-    import { onMount } from 'svelte'
     import type { Scene } from '$lib/types/Scene'
     import { Badge } from '$lib/components/ui/badge'
+    import SceneNodeInfos from '../SceneNodeInfos.svelte'
+    SceneNodeInfos
     // Les infos sont déclarées ici, imaginons qu'on ai besoin d'un id ou autre
     let { data, id, positionAbsoluteX, positionAbsoluteY } =
         $props() as NodeProps
@@ -10,20 +11,33 @@
     let scene = data.scene as Scene
 </script>
 
-<div
-    class="node relative border border-border bg-card px-4 py-2 w-80 space-y-2"
->
+<div class="node relative border border-border bg-card flex flex-row group">
     <!-- Ajout de l'ID du nœud -->
     {#if scene}
-        {id}
-        <h1 class="text-lg font-bold">{scene.title ? scene.title : 'Scene'}</h1>
-        <p class="text-sm">{scene.description ? scene.description : ''}</p>
-        <div class="flex flex-wrap gap-2">
-            {#each scene.characters as character}
-                <a href={`/characters/${character.character.id}`}>
-                    <Badge variant="outline">{character.character.name}</Badge>
-                </a>
-            {/each}
+        <div class="flex flex-col w-96">
+            <div class="flex flex-row w-full justify-between">
+                <h1 class="text-lg font-bold px-4 py-2">
+                    {scene.title ? scene.title : 'Scene'}
+                </h1>
+
+                <div>
+                    <SceneNodeInfos {scene} />
+                </div>
+            </div>
+            <div class="px-4 py-2">
+                <p class="text-sm">
+                    {scene.description ? scene.description : ''}
+                </p>
+                <div class="flex flex-wrap gap-2">
+                    {#each scene.characters as character}
+                        <a href={`/characters/${character.character.id}`}>
+                            <Badge variant="outline"
+                                >{character.character.name}</Badge
+                            >
+                        </a>
+                    {/each}
+                </div>
+            </div>
         </div>
     {/if}
     {#if !scene}
@@ -43,14 +57,3 @@
         class="!w-2 !h-2 !rounded-none"
     />
 </div>
-
-<style>
-    .node {
-        transition: all 0.2s ease-in-out;
-    }
-
-    :global(.selected .node) {
-        border: 1px solid #bababa;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    }
-</style>

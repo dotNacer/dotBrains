@@ -34,6 +34,8 @@
         db_edges: FlowEdge[]
     }>()
 
+    const SCENE_CREATION_NODE_ID = '-1'
+
     onMount(() => {
         console.log(initialNodes)
         if (initialNodes && initialNodes.length > 0) {
@@ -50,12 +52,6 @@
     let isConnecting = $state(false)
     let menuNodeRef = $state<MenuNodeRef | null>(null)
     let menuNodeId = $state<string | null>(null)
-
-    $effect(() => {
-        if (!isMenuOpened && menuNodeRef?.closeMenu) {
-            menuNodeRef.closeMenu()
-        }
-    })
 
     interface MenuNodeRef {
         closeMenu: () => void
@@ -97,7 +93,7 @@
         const { clientX, clientY } =
             'changedTouches' in event ? event.changedTouches[0] : event
 
-        menuNodeId = '-1'
+        menuNodeId = SCENE_CREATION_NODE_ID
         isConnecting = true
 
         addNode(
@@ -113,7 +109,7 @@
                 x: clientX,
                 y: clientY,
             }),
-            '-1',
+            SCENE_CREATION_NODE_ID,
         )
 
         isMenuOpened = true
@@ -238,12 +234,12 @@
                 characters,
             },
             position,
-            '-1',
+            SCENE_CREATION_NODE_ID,
         )
 
         sceneCreationStore.set({
             isOpen: true,
-            nodeId: '-1',
+            nodeId: SCENE_CREATION_NODE_ID,
             nodeRef: null,
         })
     }

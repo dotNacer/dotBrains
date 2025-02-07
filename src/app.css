@@ -6,9 +6,9 @@
     :root {
         font-family: 'Space Grotesk' !important;
     }
-    /* :root {
-        font-family: 'Geist' !important;
-    } */
+    .font-title {
+        font-family: 'PP Gosha Sans' !important;
+    }
     .font-mono {
         font-family: 'Geist Mono', monospace !important;
     }
