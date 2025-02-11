@@ -70,9 +70,15 @@
         }
     }
 
-    function createEdge(fromID: string, toId: string) {
+    function createEdge(fromId: string, toId: string) {
+        // Vérifier si une connexion existe déjà entre ces nodes
+        const existingEdge = get(edgesStore).find(
+            (edge) => edge.source === fromId && edge.target === toId,
+        )
+
+        if (existingEdge) return
         edgeService.create({
-            fromNodeId: parseInt(fromID),
+            fromNodeId: parseInt(fromId),
             toNodeId: parseInt(toId),
             type: 'smoothstep',
             animated: true,
