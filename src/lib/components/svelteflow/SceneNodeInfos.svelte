@@ -32,5 +32,15 @@
             rgba(0, 0, 0, 0.05) 10px,
             rgba(0, 0, 0, 0.05) 20px
         );
+        animation: stripe-slide 1s linear infinite;
+    }
+
+    @keyframes stripe-slide {
+        from {
+            background-position: 0 0;
+        }
+        to {
+            background-position: -32px 0;
+        }
     }
 </style>

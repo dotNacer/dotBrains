@@ -58,11 +58,27 @@
         } flex flex-col`}
     >
         <div class="title border-b">
-            <h1 class="text-3xl font-extrabold font-title">dotBrains</h1>
+            {#if isExpanded}
+                <h1
+                    class="text-3xl font-extrabold font-title"
+                    transition:slide={{ duration: 150, axis: 'y' }}
+                >
+                    dotBrains
+                </h1>
+            {:else}
+                <h1
+                    class="text-3xl font-extrabold font-title"
+                    transition:slide={{ duration: 150, axis: 'y' }}
+                >
+                    .
+                </h1>
+            {/if}
         </div>
 
         <button
-            class="mb-8 p-2 hover:bg-muted-foreground/20 rounded-lg"
+            class="p-2 hover:bg-muted-foreground/20 rounded-lg
+            {isExpanded ? 'w-full' : 'w-8 h-8 p-0'}
+            "
             onclick={() => (isExpanded = !isExpanded)}
         >
             {#if isExpanded}

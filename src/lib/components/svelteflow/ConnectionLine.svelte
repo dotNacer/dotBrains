@@ -33,7 +33,7 @@
         cy={$connection.to?.y}
         fill="#fff"
         r={3}
-        stroke={$connection.fromHandle?.id}
+        class="stroke-muted-foreground"
         stroke-width={1.5}
     />
 {/if}
