@@ -30,13 +30,13 @@
         id={`target-${id}`}
         type="target"
         position={Position.Left}
-        class="!w-2 !h-2 !rounded-none"
+        class="classic-handle"
     />
     <Handle
         id={`source-${id}`}
         type="source"
         position={Position.Right}
-        class="!w-2 !h-2 !rounded-none"
+        class="classic-handle"
     />
 </div>
 

@@ -69,4 +69,8 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    .classic-handle {
+        @apply !w-2 !h-2 !rounded-none;
+    }
 }
