@@ -7,12 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//TODO : Rename scene into Event
 model Scene {
   id          Int                  @id @default(autoincrement())
   title       String
   description String
   characters  CharactersOnScenes[]
-  nodes       Node[]
+  nodes       Node[] //TODO: Modifier nodeS en node (non tableau)
 }
 
 model Character {
@@ -51,19 +52,46 @@ model Note {
 }
 
 // Flow Management
+enum NodeType {
+  EVENT
+  GROUP
+}
 
 model Node {
   id          Int       @id @default(autoincrement())
+  type        NodeType
+  title       String?    // Nom du groupe ou titre de l'événement
+
+  // Position et taille
   positionX   Float
   positionY   Float
-  sceneId     Int?      @unique
-  scene       Scene?    @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  width       Float
+  height      Float
 
+  // Relations
   outgoing    Edge[]    @relation("FromNode")
   incoming    Edge[]    @relation("ToNode")
-  properties  Json?
+  
+  // Pour les nodes de type EVENT
+  scene       Scene?    @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  sceneId     Int?      @unique
+
+  // Pour les nodes de type GROUP
+  parentId    Int?      // ID du node parent (pour la hiérarchie des groupes)
+  parent      Node?     @relation("NodeHierarchy", fields: [parentId], references: [id])
+  children    Node[]    @relation("NodeHierarchy")
+
+  // Données additionnelles spécifiques au type
+  properties  Json?     // Stocke les propriétés spécifiques au type (couleur, icône, etc.)
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  // Index pour optimiser les performances des requêtes
+  @@index([type])              // Recherche par type de node
+  @@index([parentId])          // Navigation dans la hiérarchie
+  @@index([sceneId])           // Relation avec les scènes
+  @@index([createdAt])         // Tri chronologique
 }
 
 model Edge {
