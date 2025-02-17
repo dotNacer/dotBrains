@@ -2,7 +2,6 @@
     import { SvelteFlowProvider } from '@xyflow/svelte'
     import Flow from '$lib/components/svelteflow/Flow.svelte'
     import type { PageData } from './$types'
-    import { onMount } from 'svelte'
 
     let { data } = $props<{ data: PageData }>()
 

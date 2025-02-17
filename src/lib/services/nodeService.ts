@@ -1,5 +1,8 @@
-import { PrismaClient, Prisma, type Scene } from '@prisma/client'
-import type { CreateNodeDto } from '$lib/types/Node'
+import { PrismaClient, Prisma, type Scene, type NodeType } from '@prisma/client'
+import {
+    CONST_NODETYPES_TO_SVELTEFLOW,
+    type CreateNodeDto,
+} from '$lib/types/Node'
 import { get } from 'svelte/store'
 import { nodes } from '$lib/stores/nodeStore'
 import type { Node, NodeTypes, XYPosition } from '@xyflow/svelte'
@@ -103,6 +106,17 @@ export const updateNodeToCustom = (id: string, sceneData?: Scene) => {
  */
 export const getLastNodeID = () => {
     return get(nodes).at(-1)?.id
+}
+
+/**
+ * Map a Prisma node type to a SvelteFlow node type.
+ * @param nodeType - The Prisma node type.
+ * @returns The SvelteFlow node type.
+ */
+export const mapNodeType = (nodeType: NodeType) => {
+    return CONST_NODETYPES_TO_SVELTEFLOW[
+        nodeType as keyof typeof CONST_NODETYPES_TO_SVELTEFLOW
+    ]
 }
 
 export const nodeService = {

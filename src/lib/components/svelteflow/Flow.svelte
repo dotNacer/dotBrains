@@ -37,7 +37,7 @@
     const SCENE_CREATION_NODE_ID = '-1'
 
     onMount(() => {
-        console.log(initialNodes)
+        // console.log(initialNodes)
         if (initialNodes && initialNodes.length > 0) {
             nodesStore.set(initialNodes)
         }
