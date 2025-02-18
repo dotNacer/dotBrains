@@ -124,13 +124,12 @@ export const nodeService = {
         try {
             const node = await prisma.node.create({
                 data: {
+                    type: 'EVENT', // Par défaut pour un node de scène
                     positionX: data.positionX,
                     positionY: data.positionY,
-                    scene: data.sceneId
-                        ? {
-                              connect: { id: data.sceneId },
-                          }
-                        : undefined,
+                    width: 300, // Valeur par défaut pour un node de scène
+                    height: 150, // Valeur par défaut pour un node de scène
+                    sceneId: data.sceneId,
                     properties: data.properties,
                 },
                 include: {
@@ -265,5 +264,32 @@ export const nodeService = {
             console.error('Error fetching node by scene ID:', error)
             throw error
         }
+    },
+
+    updateDimensions: async (
+        nodeId: string,
+        width: number,
+        height: number,
+        customFetch?: typeof fetch
+    ) => {
+        const fetchInstance = customFetch || fetch
+        const response = await fetchInstance('/api/nodes', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: parseInt(nodeId),
+                width: width,
+                height: height,
+            }),
+        })
+
+        if (!response.ok) {
+            const error = await response.json()
+            throw new Error(error.message || 'Failed to update node dimensions')
+        }
+
+        return response.json()
     },
 }

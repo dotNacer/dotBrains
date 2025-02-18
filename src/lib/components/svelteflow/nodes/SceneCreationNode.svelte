@@ -77,17 +77,22 @@
             })
 
             const responseData = await response.json()
+            console.log('Response from server:', responseData)
 
             if (response.ok) {
                 toast.success('Node created successfully!')
-                // Parser la réponse qui est une chaîne JSON
-                const parsedData = JSON.parse(responseData.data)
-                // L'ID du node se trouve à l'index 3 du tableau
-                const nodeId = parsedData[3].toString()
-
-                updateNodeId(id, nodeId)
-
-                updateNodeToCustom(nodeId, sceneData)
+                // Transform responseData.data to a json object
+                const jsonData = JSON.parse(responseData.data)
+                console.log('Response data:', jsonData)
+                // Vérifier la structure de la réponse
+                if (jsonData) {
+                    const nodeId = jsonData.node_id
+                    updateNodeId(id, nodeId)
+                    updateNodeToCustom(nodeId, sceneData)
+                } else {
+                    toast.error('Invalid response format')
+                    console.error('Invalid response format:', responseData)
+                }
             } else {
                 toast.error('Failed to create node')
             }

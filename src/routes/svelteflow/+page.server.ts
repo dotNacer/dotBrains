@@ -25,6 +25,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
             x: node.positionX,
             y: node.positionY,
         },
+        width: node.width,
+        height: node.height,
         data: {
             properties: node.properties,
             scene: node.scene,
@@ -61,8 +63,10 @@ export const actions: Actions = {
 
             return {
                 success: true,
-                message: 'Node created successfully!',
-                node_id: node.id,
+                data: {
+                    node_id: node.id,
+                    message: 'Node created successfully!',
+                },
             }
         } catch (error) {
             console.error('Error in create node action:', error)

@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit'
+import type { RequestHandler, RequestEvent } from './$types'
 import { PrismaClient } from '@prisma/client'
-import type { RequestEvent } from './$types'
 
 const prisma = new PrismaClient()
 
@@ -10,13 +10,16 @@ export async function POST({ request }: RequestEvent) {
     try {
         const node = await prisma.node.create({
             data: {
+                type: 'EVENT', // Par défaut pour un node de scène
                 positionX: data.positionX,
                 positionY: data.positionY,
+                width: 300, // Valeur par défaut pour un node de scène
+                height: 150, // Valeur par défaut pour un node de scène
                 sceneId: data.sceneId,
                 properties: data.properties,
             },
         })
-        return json(node)
+        return json({ success: true, node })
     } catch (error) {
         console.error('Error creating node:', error)
         return new Response(
@@ -65,8 +68,9 @@ export async function GET({ url }: RequestEvent) {
     }
 }
 
-export async function DELETE({ url }: RequestEvent) {
+export const DELETE: RequestHandler = async ({ url }) => {
     const id = url.searchParams.get('id')
+
     if (!id) {
         return new Response(JSON.stringify({ error: 'ID is required' }), {
             status: 400,
@@ -74,15 +78,11 @@ export async function DELETE({ url }: RequestEvent) {
     }
 
     try {
-        const node = await prisma.node.delete({
+        await prisma.node.delete({
             where: { id: parseInt(id) },
-            include: {
-                scene: true,
-                outgoing: true,
-                incoming: true,
-            },
         })
-        return json(node)
+
+        return new Response(null, { status: 204 })
     } catch (error) {
         console.error('Error deleting node:', error)
         return new Response(
@@ -94,26 +94,32 @@ export async function DELETE({ url }: RequestEvent) {
     }
 }
 
-export async function PATCH({ request }: RequestEvent) {
+export const PATCH: RequestHandler = async ({ request }) => {
     const data = await request.json()
-    const { id, ...updateData } = data
+    const { id, width, height, positionX, positionY } = data
+
+    if (!id) {
+        return new Response(JSON.stringify({ error: 'ID is required' }), {
+            status: 400,
+        })
+    }
 
     try {
-        const node = await prisma.node.update({
+        const updatedNode = await prisma.node.update({
             where: { id: parseInt(id) },
             data: {
-                positionX: updateData.positionX,
-                positionY: updateData.positionY,
-                sceneId: updateData.sceneId,
-                properties: updateData.properties,
-            },
-            include: {
-                scene: true,
-                outgoing: true,
-                incoming: true,
+                ...(width !== undefined && { width: parseFloat(width) }),
+                ...(height !== undefined && { height: parseFloat(height) }),
+                ...(positionX !== undefined && {
+                    positionX: parseFloat(positionX),
+                }),
+                ...(positionY !== undefined && {
+                    positionY: parseFloat(positionY),
+                }),
             },
         })
-        return json(node)
+
+        return json(updatedNode)
     } catch (error) {
         console.error('Error updating node:', error)
         return new Response(
