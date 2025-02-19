@@ -65,7 +65,6 @@ export const actions: Actions = {
                 success: true,
                 data: {
                     node_id: node.id,
-                    message: 'Node created successfully!',
                 },
             }
         } catch (error) {

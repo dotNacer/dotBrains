@@ -48,9 +48,13 @@
 <div
     class="node relative border border-border bg-card flex flex-row group w-full h-full"
 >
-    {width}
-    {height}
+    <div class="flex flex-col gap-2 w-full h-full">
+        <p class="text-lg text-muted-foreground">ID : {id}</p>
+        {width}
+        {height}
+    </div>
     {#if scene}
+        <p class="text-lg text-muted-foreground">ID scene : {scene.id}</p>
         <div class="flex flex-col w-full h-full">
             <div class="flex flex-row w-full justify-between">
                 <h1 class="text-lg font-bold px-4 py-2">

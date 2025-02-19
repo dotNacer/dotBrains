@@ -10,6 +10,7 @@
     import ConnectionLine from '$lib/components/svelteflow/ConnectionLine.svelte'
     import { addNode, nodeService } from '$lib/services/nodeService'
     import { nodes as nodesStore } from '$lib/stores/nodeStore'
+    import { Button } from '$lib/components/ui/button'
     import {
         edges as edgesStore,
         defaultEdgeOptions,
@@ -252,6 +253,14 @@
 </script>
 
 <div class="wrapper">
+    <Button
+        onclick={() => {
+            console.log(get(edgesStore)[get(edgesStore).length - 2])
+            console.log(get(edgesStore)[get(edgesStore).length - 1])
+        }}
+    >
+        Log last edge
+    </Button>
     <SvelteFlow
         nodes={nodesStore}
         {nodeTypes}

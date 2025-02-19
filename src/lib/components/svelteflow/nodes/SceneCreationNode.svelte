@@ -83,10 +83,9 @@
                 toast.success('Node created successfully!')
                 // Transform responseData.data to a json object
                 const jsonData = JSON.parse(responseData.data)
-                console.log('Response data:', jsonData)
                 // Vérifier la structure de la réponse
                 if (jsonData) {
-                    const nodeId = jsonData.node_id
+                    const nodeId = jsonData[3] // Quoi de la fuck
                     updateNodeId(id, nodeId)
                     updateNodeToCustom(nodeId, sceneData)
                 } else {
