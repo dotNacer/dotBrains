@@ -253,14 +253,14 @@
 </script>
 
 <div class="wrapper">
-    <Button
+    <!-- <Button
         onclick={() => {
             console.log(get(edgesStore)[get(edgesStore).length - 2])
             console.log(get(edgesStore)[get(edgesStore).length - 1])
         }}
     >
         Log last edge
-    </Button>
+    </Button> -->
     <SvelteFlow
         nodes={nodesStore}
         {nodeTypes}
