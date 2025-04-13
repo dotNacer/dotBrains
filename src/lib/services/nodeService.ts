@@ -9,6 +9,8 @@ import type { Node, NodeTypes, XYPosition } from '@xyflow/svelte'
 import type { Handle } from '@xyflow/system'
 import { addEdgeBetweenNodes } from './edgeService'
 
+// Déplacer le client prisma dans un autre fichié appellé par un hook,
+// Pour n'avoir qu'un seul client
 const prisma = new PrismaClient()
 
 /* Documentation: https://svelteflow.dev/api-reference/types/node */
@@ -19,7 +21,7 @@ const prisma = new PrismaClient()
  * @param type - The type of the node.
  * @param data - The data of the node.
  * @param position - The position of the node.
- * @param fromNode - Node informations where the node was dragged
+ * @param specificId - The specific ID of the node.
  */
 export const addNode = <T extends Record<string, unknown>>(
     type: keyof NodeTypes,

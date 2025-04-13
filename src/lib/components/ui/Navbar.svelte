@@ -132,5 +132,5 @@
         onmousedown={handleMouseDown}
         role="button"
         tabindex="0"
-    />
+    ></div>
 </nav>

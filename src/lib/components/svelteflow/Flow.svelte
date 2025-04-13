@@ -47,12 +47,13 @@
         }
     })
 
-    const { screenToFlowPosition } = useSvelteFlow()
+    const { screenToFlowPosition, getNodes } = useSvelteFlow()
 
     let isMenuOpened = $state(false)
     let isConnecting = $state(false)
     let menuNodeRef = $state<MenuNodeRef | null>(null)
     let menuNodeId = $state<string | null>(null)
+    let selectedNodes = $state<Node[]>([])
 
     interface MenuNodeRef {
         closeMenu: () => void
@@ -250,17 +251,42 @@
             nodeRef: null,
         })
     }
+
+    function handleSelectionChange(event: any) {
+        selectedNodes = event.detail.nodes || []
+
+        if (selectedNodes.length > 1) {
+            console.log(
+                'Nœuds sélectionnés:',
+                selectedNodes.map((node) => node.id),
+            )
+        }
+    }
+
+    // Nouvelle fonction pour afficher les nœuds sélectionnés
+    function displaySelectedNodes(event: MouseEvent) {
+        // Empêcher la propagation du clic
+        event.stopPropagation()
+
+        // Obtenir directement les nœuds sélectionnés depuis le store
+        const allNodes = getNodes()
+        const currentlySelectedNodes = allNodes.filter((node) => node.selected)
+
+        if (currentlySelectedNodes.length > 0) {
+            console.log(
+                'Nœuds actuellement sélectionnés:',
+                currentlySelectedNodes.map((node) => node.id),
+            )
+        } else {
+            console.log('Aucun nœud sélectionné')
+        }
+    }
 </script>
 
 <div class="wrapper">
-    <!-- <Button
-        onclick={() => {
-            console.log(get(edgesStore)[get(edgesStore).length - 2])
-            console.log(get(edgesStore)[get(edgesStore).length - 1])
-        }}
-    >
-        Log last edge
-    </Button> -->
+    <Button onclick={displaySelectedNodes} class="absolute top-4 right-4 z-10">
+        Afficher nœuds sélectionnés
+    </Button>
     <SvelteFlow
         nodes={nodesStore}
         {nodeTypes}
@@ -272,8 +298,10 @@
         on:nodedrag={handleNodeDrag}
         on:paneclick={handlePaneClick}
         on:panecontextmenu={handlePaneContextMenu}
+        on:selectionchange={handleSelectionChange}
         {defaultEdgeOptions}
         class="!bg-card"
+        selectionKey="Shift"
     >
         <FlowOptions {characters} />
         <ConnectionLine slot="connectionLine" />
@@ -290,6 +318,7 @@
 
     .wrapper {
         height: 100vh;
+        position: relative;
     }
 
     :global(.svelte-flow__attribution) {

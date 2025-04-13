@@ -8,6 +8,7 @@ import { characterService } from '$lib/services/characterService'
 import { sceneService } from '$lib/services/sceneService'
 import { nodeService, mapNodeType } from '$lib/services/nodeService'
 import { edgeService } from '$lib/services/edgeService'
+import { nodes } from '$lib/stores/nodeStore'
 
 export const load: PageServerLoad = async ({ fetch }) => {
     const [characters, scenes, dbNodes, dbEdges] = await Promise.all([
