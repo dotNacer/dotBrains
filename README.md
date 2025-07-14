@@ -1,6 +1,6 @@
 # dotBrains 🧠
 
-A web application that helps me manage my thoughts and ideas, including a flow driven editor to capture my ideas coupled with a note taking system to record my thoughts.
+A web application that helps me manage my thoughts and ideas, including a flow driven editor to capture my ideas coupled with a note taking system to record my thoughts ( [dotMeyia](https://github.com/dotNacer/dotMeyia/)).
 
 ## Tech Stack
 

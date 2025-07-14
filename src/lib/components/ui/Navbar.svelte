@@ -3,13 +3,7 @@
     import { theme } from '$lib/stores/theme'
     import Logo from '$lib/components/ui/Logo.svelte'
     import { onMount } from 'svelte'
-    import {
-        Notebook,
-        Workflow,
-        BookMarked,
-        Users,
-        PanelRightOpen,
-    } from 'lucide-svelte'
+    import { Workflow, BookMarked, Users, PanelRightOpen } from 'lucide-svelte'
     import { page } from '$app/stores'
     import { fly, slide } from 'svelte/transition'
     let isExpanded = $state(true)
@@ -17,11 +11,9 @@
     let isDragging = $state(false)
 
     const navigationLinks = [
-        { href: '/', icon: Notebook, label: 'Note Taking' },
         { href: '/svelteflow', icon: Workflow, label: 'Flow' },
         { href: '/characters', icon: Users, label: 'Characters' },
         { href: '/scenes', icon: BookMarked, label: 'Scenes' },
-        { href: '/notes', icon: Notebook, label: 'Notes' },
     ]
 
     onMount(() => {
