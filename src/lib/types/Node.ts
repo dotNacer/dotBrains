@@ -1,9 +1,17 @@
 import type { Prisma } from '@prisma/client'
 import type { NodeType } from '@prisma/client'
+import type { XYPosition } from '@xyflow/svelte'
 
 export const CONST_NODETYPES_TO_SVELTEFLOW = {
     EVENT: 'scene',
     GROUP: 'parent-group',
+}
+
+export interface createNodeDtoTest {
+    type: NodeType
+    position: XYPosition
+    sceneId?: number
+    properties?: Prisma.InputJsonValue
 }
 
 export interface CreateNodeDto {

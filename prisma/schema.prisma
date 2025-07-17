@@ -7,30 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//TODO : Rename scene into Event
+
 model Scene {
+    id Int @id @default(autoincrement())
+    name String
+    description String
+    nodes Node[] @relation("GroupNodes")
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([name])
+    @@index([createdAt])
+}
+
+//TODO : Rename scene into Event
+model SceneEvent {
   id          Int                  @id @default(autoincrement())
   title       String
   description String
-  characters  CharactersOnScenes[]
-  nodes       Node[] //TODO: Modifier nodeS en node (non tableau)
+  characters  Character[]
+  
+  // Un SceneEvent DOIT avoir un Node
+  nodeId      Int                  @unique
+  node        Node                 @relation(fields: [nodeId], references: [id], onDelete: Cascade)
 }
-
 model Character {
   id          Int                  @id @default(autoincrement())
   name        String
   description String
-  scenes      CharactersOnScenes[]
+  scenes      SceneEvent[]
   references  Reference[]
-}
-
-model CharactersOnScenes {
-  characterId Int
-  sceneId     Int
-  character   Character @relation(fields: [characterId], references: [id])
-  scene       Scene     @relation(fields: [sceneId], references: [id], onDelete: Cascade)
-
-  @@id([characterId, sceneId])
 }
 
 model Reference {
@@ -51,7 +57,7 @@ enum NodeType {
 model Node {
   id          Int       @id @default(autoincrement())
   type        NodeType
-  title       String?    // Nom du groupe ou titre de l'événement
+  title       String?
 
   // Position et taille
   positionX   Float
@@ -64,25 +70,25 @@ model Node {
   incoming    Edge[]    @relation("ToNode")
   
   // Pour les nodes de type EVENT
-  scene       Scene?    @relation(fields: [sceneId], references: [id], onDelete: Cascade)
-  sceneId     Int?      @unique
+  sceneEventId     Int?      @unique
+  sceneEvent       SceneEvent?    // Un Node peut avoir 0 ou 1 SceneEvent
 
   // Pour les nodes de type GROUP
-  parentId    Int?      // ID du node parent (pour la hiérarchie des groupes)
+  parentId    Int?
   parent      Node?     @relation("NodeHierarchy", fields: [parentId], references: [id])
   children    Node[]    @relation("NodeHierarchy")
 
-  // Données additionnelles spécifiques au type
-  properties  Json?     // Stocke les propriétés spécifiques au type (couleur, icône, etc.)
+  sceneId     Int
+  scene       Scene    @relation("GroupNodes", fields: [sceneId], references: [id], onDelete: Cascade)
 
+  properties  Json?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  // Index pour optimiser les performances des requêtes
-  @@index([type])              // Recherche par type de node
-  @@index([parentId])          // Navigation dans la hiérarchie
-  @@index([sceneId])           // Relation avec les scènes
-  @@index([createdAt])         // Tri chronologique
+  @@index([type])
+  @@index([parentId])
+  @@index([sceneId])
+  @@index([createdAt])
 }
 
 model Edge {

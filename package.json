@@ -26,7 +26,7 @@
         "prettier-plugin-svelte": "^3.2.6",
         "prettier-plugin-tailwindcss": "^0.6.5",
         "prisma": "^6.2.0",
-        "svelte": "^5.0.0",
+        "svelte": "^5.35.7",
         "svelte-check": "^4.0.0",
         "svelte-sonner": "^0.3.28",
         "sveltekit-superforms": "^2.22.1",
@@ -45,7 +45,8 @@
         "@tailwindcss/typography": "^0.5.15",
         "@tiptap/extension-mention": "^2.11.0",
         "@tiptap/extension-text-align": "^2.10.3",
-        "@xyflow/svelte": "^0.1.24",
+        "@types/node": "^24.0.13",
+        "@xyflow/svelte": "^1.2.2",
         "postgres": "^3.4.4"
     }
 }
