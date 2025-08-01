@@ -1,44 +1,15 @@
-import { json } from '@sveltejs/kit'
 import type { RequestEvent } from './$types'
-import prisma from '$lib/server/prisma'
+import type { SceneDto } from '$lib/types/Scene'
+import { sceneService2 } from '$lib/services/sceneService2'
+import type { Scene } from '$lib/types/Scene'
+import { json } from '@sveltejs/kit'
 
-export async function DELETE({ url }: RequestEvent) {
-    const id = url.searchParams.get('id')
-    if (!id) {
-        return new Response(JSON.stringify({ error: 'ID is required' }), {
-            status: 400,
-        })
-    }
+//TODO: vraiment améliorer le systeme d'erreur pck la...
+export async function GET(): Promise<Response> {
+	return json(await sceneService2.getAll())
+}
 
-    console.log('deleting scene', id)
-
-    try {
-        // Vérifier si la scène existe avant de la supprimer
-        const scene = await prisma.scene.findUnique({
-            where: {
-                id: parseInt(id),
-            },
-        })
-
-        if (!scene) {
-            return new Response(JSON.stringify({ error: 'Scene not found' }), {
-                status: 404,
-            })
-        }
-
-        await prisma.scene.delete({
-            where: {
-                id: parseInt(id),
-            },
-        })
-        return json({ message: 'Scene deleted successfully' })
-    } catch (error) {
-        console.error('Error deleting scene:', error)
-        return new Response(
-            JSON.stringify({ error: 'Failed to delete scene' }),
-            {
-                status: 500,
-            }
-        )
-    }
+export async function POST(event: RequestEvent): Promise<Response> {
+	const { name, description }: SceneDto = await event.request.json()
+	return json(await sceneService2.create({ name, description }))
 }

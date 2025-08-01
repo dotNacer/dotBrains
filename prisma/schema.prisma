@@ -8,11 +8,13 @@ datasource db {
 }
 
 
+//TODO: Utiliser des ids string a la place des ids int
 model Scene {
     id Int @id @default(autoincrement())
     name String
     description String
     nodes Node[] @relation("GroupNodes")
+    edges Edge[] @relation("GroupEdges")
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -101,6 +103,10 @@ model Edge {
   animated    Boolean   @default(false)
   label       String?
   conditions  Json?
+
+  sceneId     Int
+  scene       Scene    @relation("GroupEdges", fields: [sceneId], references: [id], onDelete: Cascade)
+
   properties  Json?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
