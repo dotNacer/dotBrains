@@ -31,7 +31,7 @@ function createScenesStore() {
 				return data as Scene
 			}
 		},
-		edit: async (scene: SceneDto, sceneId: number) => {
+		edit: async (scene: SceneDto, sceneId: string) => {
 			const { data, error } = await tryCatch(
 				fetch(`/api/scenes/${sceneId}`, {
 					method: 'PUT',
@@ -45,7 +45,7 @@ function createScenesStore() {
 				return data as Scene
 			}
 		},
-		delete: async (sceneId: number) => {
+		delete: async (sceneId: string) => {
 			const { data, error } = await tryCatch(
 				fetch(`/api/scenes/${sceneId}`, {
 					method: 'DELETE',

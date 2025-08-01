@@ -10,7 +10,7 @@ datasource db {
 
 //TODO: Utiliser des ids string a la place des ids int
 model Scene {
-    id Int @id @default(autoincrement())
+    id String @id @default(cuid())
     name String
     description String
     nodes Node[] @relation("GroupNodes")
@@ -24,17 +24,17 @@ model Scene {
 
 //TODO : Rename scene into Event
 model SceneEvent {
-  id          Int                  @id @default(autoincrement())
+  id          String               @id @default(cuid())
   title       String
   description String
   characters  Character[]
   
   // Un SceneEvent DOIT avoir un Node
-  nodeId      Int                  @unique
+  nodeId      String               @unique
   node        Node                 @relation(fields: [nodeId], references: [id], onDelete: Cascade)
 }
 model Character {
-  id          Int                  @id @default(autoincrement())
+  id          String               @id @default(cuid())
   name        String
   description String
   scenes      SceneEvent[]
@@ -42,11 +42,11 @@ model Character {
 }
 
 model Reference {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   name        String
   description String
   url         String
-  characterId Int
+  characterId String
   character   Character @relation(fields: [characterId], references: [id])
 }
 
@@ -57,7 +57,7 @@ enum NodeType {
 }
 
 model Node {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   type        NodeType
   title       String?
 
@@ -72,15 +72,15 @@ model Node {
   incoming    Edge[]    @relation("ToNode")
   
   // Pour les nodes de type EVENT
-  sceneEventId     Int?      @unique
+  sceneEventId     String?      @unique
   sceneEvent       SceneEvent?    // Un Node peut avoir 0 ou 1 SceneEvent
 
   // Pour les nodes de type GROUP
-  parentId    Int?
+  parentId    String?
   parent      Node?     @relation("NodeHierarchy", fields: [parentId], references: [id])
   children    Node[]    @relation("NodeHierarchy")
 
-  sceneId     Int
+  sceneId     String
   scene       Scene    @relation("GroupNodes", fields: [sceneId], references: [id], onDelete: Cascade)
 
   properties  Json?
@@ -94,17 +94,17 @@ model Node {
 }
 
 model Edge {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   fromNode    Node      @relation("FromNode", fields: [fromNodeId], references: [id])
-  fromNodeId  Int
+  fromNodeId  String
   toNode      Node      @relation("ToNode", fields: [toNodeId], references: [id])
-  toNodeId    Int
+  toNodeId    String
   type        String    @default("default")
   animated    Boolean   @default(false)
   label       String?
   conditions  Json?
 
-  sceneId     Int
+  sceneId     String
   scene       Scene    @relation("GroupEdges", fields: [sceneId], references: [id], onDelete: Cascade)
 
   properties  Json?

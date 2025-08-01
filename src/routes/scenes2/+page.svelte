@@ -40,7 +40,7 @@
 	>
 		<p>{scene.name}</p>
 		<p>{scene.id}</p>
-		<button onclick={() => editScene(scene)}>Modifier</button>
-		<button onclick={() => scenesStore.delete(scene.id)}>Supprimer</button>
 	</div>
+	<button onclick={() => editScene(scene)}>Modifier</button>
+	<button onclick={() => scenesStore.delete(scene.id)}>Supprimer</button>
 {/each}

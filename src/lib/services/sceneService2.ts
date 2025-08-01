@@ -12,7 +12,7 @@ export const sceneService2 = {
 
 		return data as PrismaScene[]
 	},
-	get: async (scene_id: number) => {
+	get: async (scene_id: string) => {
 		const { data, error } = await tryCatch<Scene | null>(
 			prisma.scene.findUnique({
 				where: { id: scene_id },
@@ -38,7 +38,7 @@ export const sceneService2 = {
 		if (error) throw error
 		return data as PrismaScene
 	},
-	update: async (scene: SceneDto, scene_id: number) => {
+	update: async (scene: SceneDto, scene_id: string) => {
 		const { data, error } = await tryCatch<PrismaScene>(
 			prisma.scene.update({
 				where: { id: scene_id },
@@ -49,7 +49,7 @@ export const sceneService2 = {
 		if (!data) throw new Error('Scene not found')
 		return data as PrismaScene
 	},
-	delete: async (scene_id: number) => {
+	delete: async (scene_id: string) => {
 		const { data, error } = await tryCatch<PrismaScene>(
 			prisma.scene.delete({ where: { id: scene_id } })
 		)

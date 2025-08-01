@@ -5,7 +5,7 @@ import type { Scene } from '$lib/types/Scene'
 
 export const load: PageServerLoad = async ({ params }) => {
 	const scene_id = params.scene_id
-	const scene = (await sceneService2.get(parseInt(scene_id))) as unknown as Scene
+	const scene = (await sceneService2.get(scene_id)) as unknown as Scene
 	if (!scene) {
 		throw error(404, 'Scene not found')
 	}
