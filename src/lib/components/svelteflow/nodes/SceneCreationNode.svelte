@@ -80,17 +80,31 @@
             console.log('Response from server:', responseData)
 
             if (response.ok) {
-                toast.success('Node created successfully!')
-                // Transform responseData.data to a json object
-                const jsonData = JSON.parse(responseData.data)
-                // Vérifier la structure de la réponse
-                if (jsonData) {
-                    const nodeId = jsonData[3] // Quoi de la fuck
-                    updateNodeId(id, nodeId)
-                    updateNodeToCustom(nodeId, sceneData)
-                } else {
-                    toast.error('Invalid response format')
-                    console.error('Invalid response format:', responseData)
+                try {
+                    // Safely parse the response data
+                    let parsedData
+                    if (typeof responseData.data === 'string') {
+                        parsedData = JSON.parse(responseData.data)
+                    } else {
+                        parsedData = responseData.data
+                    }
+                    
+                    // Extract nodeId with proper fallback
+                    let nodeId = parsedData?.payload?.nodeId || parsedData?.payload?.[3]
+                    
+                    if (nodeId) {
+                        // Normalize nodeId to string
+                        nodeId = String(nodeId)
+                        updateNodeId(id, nodeId)
+                        updateNodeToCustom(nodeId, sceneData)
+                        toast.success('Node created successfully!')
+                    } else {
+                        toast.error('Invalid response format: missing nodeId')
+                        console.error('Invalid response format:', responseData)
+                    }
+                } catch (parseError) {
+                    console.error('Error parsing response:', parseError)
+                    toast.error('Failed to parse server response')
                 }
             } else {
                 toast.error('Failed to create node')

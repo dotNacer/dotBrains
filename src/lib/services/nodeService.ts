@@ -1,4 +1,5 @@
-import { PrismaClient, Prisma, type Scene, type NodeType } from '@prisma/client'
+import { Prisma, type Scene, type NodeType } from '@prisma/client'
+import prisma from '$lib/server/prisma'
 import {
     CONST_NODETYPES_TO_SVELTEFLOW,
     type CreateNodeDto,
@@ -9,9 +10,7 @@ import type { Node, NodeTypes, XYPosition } from '@xyflow/svelte'
 import type { Handle } from '@xyflow/system'
 import { addEdgeBetweenNodes } from './edgeService'
 
-// Déplacer le client prisma dans un autre fichié appellé par un hook,
-// Pour n'avoir qu'un seul client
-const prisma = new PrismaClient()
+// Prisma client is now imported from the centralized singleton module to ensure a single instance
 
 /* Documentation: https://svelteflow.dev/api-reference/types/node */
 // addNode va chercher le dernier ID, et prends un type de Node en argument, prends ensuite les data en argument (T)

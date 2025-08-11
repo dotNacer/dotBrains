@@ -4,19 +4,6 @@
 	import type { PageData } from './$types'
 
 	let { data } = $props<{ data: PageData }>()
-
-	const INITIAL_NODES = [
-		{
-			id: '-2',
-			type: 'parent-group',
-			position: { x: 0, y: 0 },
-			width: 350,
-			height: 210,
-			data: {
-				group_name: 'GroupName',
-			},
-		},
-	]
 </script>
 
 <!-- You need the SvelteFlowProvider so you can useSvelteFlow  -->

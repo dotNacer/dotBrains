@@ -17,13 +17,20 @@
 	}
 
 	function editScene(scene: Scene) {
-		scenesStore.edit(
-			{
-				name: 'Scène ' + scene.id,
-				description: 'Description de la scène ' + scene.id,
-			},
-			scene.id
-		)
+		// Prompt for new values (replace with modal/form in production)
+		const newName = prompt('Enter new name for the scene:', scene.name) || scene.name
+		const newDescription = prompt('Enter new description:', scene.description || '') || scene.description
+		
+		// Only update if values have changed
+		if (newName !== scene.name || newDescription !== scene.description) {
+			scenesStore.edit(
+				{
+					name: newName,
+					description: newDescription,
+				},
+				scene.id
+			)
+		}
 	}
 </script>
 

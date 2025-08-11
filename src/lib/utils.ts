@@ -24,7 +24,18 @@ export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Resul
 		const data = await promise
 		return { data, error: null }
 	} catch (error) {
-		return { data: null, error: error as E }
+		// Normalize thrown values to Error objects
+		let normalizedError: E
+		if (error instanceof Error) {
+			normalizedError = error as E
+		} else if (error && typeof error === 'object' && 'message' in error) {
+			// Object with message property
+			normalizedError = error as E
+		} else {
+			// Wrap non-Error values in an Error object
+			normalizedError = new Error(String(error)) as E
+		}
+		return { data: null, error: normalizedError }
 	}
 }
 

@@ -8,7 +8,6 @@ datasource db {
 }
 
 
-//TODO: Utiliser des ids string a la place des ids int
 model Scene {
     id String @id @default(cuid())
     name String
@@ -68,8 +67,8 @@ model Node {
   height      Float
 
   // Relations
-  outgoing    Edge[]    @relation("FromNode")
-  incoming    Edge[]    @relation("ToNode")
+  incoming    Edge[]    @relation("SourceNode")
+  outgoing    Edge[]    @relation("TargetNode")
   
   // Pour les nodes de type EVENT
   sceneEventId     String?      @unique
@@ -95,14 +94,15 @@ model Node {
 
 model Edge {
   id          String    @id @default(cuid())
-  fromNode    Node      @relation("FromNode", fields: [fromNodeId], references: [id])
-  fromNodeId  String
-  toNode      Node      @relation("ToNode", fields: [toNodeId], references: [id])
-  toNodeId    String
-  type        String    @default("default")
-  animated    Boolean   @default(false)
+  target      Node      @relation("TargetNode", fields: [targetId], references: [id])
+  targetId    String
+  source    Node      @relation("SourceNode", fields: [sourceId], references: [id])
+  sourceId  String
+  
+  type        String    @default("smoothstep") // Enum qui vient de svelteflow
+  animated    Boolean   @default(true)
   label       String?
-  conditions  Json?
+  conditions  Json? // Supprimer condition ?
 
   sceneId     String
   scene       Scene    @relation("GroupEdges", fields: [sceneId], references: [id], onDelete: Cascade)
@@ -111,5 +111,5 @@ model Edge {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  @@unique([fromNodeId, toNodeId])
+  @@unique([sourceId, targetId])
 }

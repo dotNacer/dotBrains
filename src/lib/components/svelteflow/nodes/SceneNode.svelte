@@ -13,7 +13,7 @@
     let resizeDebounceTimer: ReturnType<typeof setTimeout>
 
     const handleResizeEnd = (
-        e: any,
+        e: MouseEvent | PointerEvent,
         params: { width: number; height: number },
     ) => {
         clearTimeout(resizeDebounceTimer)
@@ -50,8 +50,6 @@
 >
     <div class="flex flex-col gap-2 w-full h-full">
         <p class="text-lg text-muted-foreground">ID : {id}</p>
-        {width}
-        {height}
     </div>
     {#if scene}
         <p class="text-lg text-muted-foreground">ID scene : {scene.id}</p>

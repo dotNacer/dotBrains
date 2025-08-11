@@ -1,5 +1,4 @@
-import type { DtoOmit } from '@/utils'
-import type { Character } from './Character'
+import type { DtoOmit } from '$lib/utils'
 import type { Scene as PrismaScene, Node as PrismaNode, Edge as PrismaEdge } from '@prisma/client'
 
 export type Scene = PrismaScene & {
@@ -14,12 +13,3 @@ export interface CreateSceneDto {
 	description: string
 	characterIds?: number[]
 }
-
-/* export interface Scene {
-	id: number
-	title: string
-	description: string
-	characters: {
-		character: Character
-	}[]
-} */

@@ -1,7 +1,12 @@
 import { initializePrisma, closePrisma } from '$lib/server/prisma'
-import { env } from '$env/dynamic/public'
+
 ;(async () => {
-    await initializePrisma()
+    try {
+        await initializePrisma()
+    } catch (error) {
+        console.error('Failed to initialize Prisma:', error)
+        process.exit(1)
+    }
 })()
 
 process.on('SIGTERM', async () => {

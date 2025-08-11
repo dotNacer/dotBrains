@@ -1,7 +1,6 @@
 import prisma from '$lib/server/prisma'
 import type { Scene, SceneDto } from '$lib/types/Scene'
 import type { Scene as PrismaScene } from '@prisma/client'
-import { json } from '@sveltejs/kit'
 import { tryCatch } from '@/utils'
 
 //Type de store = PrismaScene[] ? vu qu'osef d'avoir les nodes et edges ?
@@ -12,7 +11,7 @@ export const sceneService2 = {
 
 		return data as PrismaScene[]
 	},
-	get: async (scene_id: string) => {
+	get: async (scene_id: string): Promise<Scene> => {
 		const { data, error } = await tryCatch<Scene | null>(
 			prisma.scene.findUnique({
 				where: { id: scene_id },
@@ -24,7 +23,7 @@ export const sceneService2 = {
 		)
 		if (error) throw error
 		if (!data) throw new Error('Scene not found')
-		return data as Scene
+		return data
 	},
 	create: async (scene: SceneDto) => {
 		const { data, error } = await tryCatch<PrismaScene>(
