@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	return {
 		scene_id,
 		scene: scene,
-		nodes: formatDBNodes(scene.nodes),
+		nodes: scene.nodes,
 		edges: formatDBEdges(scene.edges),
 	}
 }

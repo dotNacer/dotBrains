@@ -6,5 +6,5 @@
 
 <NodeResizer minWidth={width} minHeight={height} isVisible={selected} />
 <div class="flex h-full w-full border bg-background p-2">{data.title}</div>
-<Handle type="target" position={Position.Right} />
-<Handle type="source" position={Position.Left} />
+<Handle type="target" position={Position.Left} />
+<Handle type="source" position={Position.Right} />

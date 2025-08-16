@@ -6,7 +6,6 @@
 	import { goto } from '$app/navigation'
 	onMount(async () => {
 		await scenesStore.fetch()
-		console.log($scenesStore)
 	})
 
 	function createScene() {
@@ -19,8 +18,9 @@
 	function editScene(scene: Scene) {
 		// Prompt for new values (replace with modal/form in production)
 		const newName = prompt('Enter new name for the scene:', scene.name) || scene.name
-		const newDescription = prompt('Enter new description:', scene.description || '') || scene.description
-		
+		const newDescription =
+			prompt('Enter new description:', scene.description || '') || scene.description
+
 		// Only update if values have changed
 		if (newName !== scene.name || newDescription !== scene.description) {
 			scenesStore.edit(

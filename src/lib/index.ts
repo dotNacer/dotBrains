@@ -1,4 +1,4 @@
-import type { NodeTypes } from '@xyflow/svelte'
+import type { NodeTypes, EdgeTypes } from '@xyflow/svelte'
 import { MarkerType } from '@xyflow/svelte'
 import TestNode from '$lib/components/svelteflow/nodes/TestNode.svelte'
 
@@ -7,7 +7,7 @@ export const nodeTypes: NodeTypes = {
 }
 
 export const defaultEdgeOptions = {
-	type: 'floating',
+	type: 'smoothstep',
 	deletable: false,
 	animated: true,
 	markerEnd: {
