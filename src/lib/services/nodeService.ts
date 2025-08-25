@@ -1,7 +1,7 @@
-import type { CreateNodeDto } from './../types/Node'
+import type { CreateNodeDto } from '$lib/types/Node'
 import prisma from '$lib/server/prisma'
-import type { Node as PrismaNode, Prisma } from '@prisma/client'
-import { tryCatch } from '@/utils'
+import type { Node as PrismaNode } from '@prisma/client'
+import { tryCatch } from '$lib/utils'
 
 export const nodeService = {
 	create: async (node: CreateNodeDto) => {
