@@ -29,6 +29,18 @@ function createNodeStore() {
 				update((nodes) => [...nodes, data as PrismaNode])
 			}
 		},
+		deleteNode: async (nodeId: string, sceneId: string) => {
+			const { data, error } = await tryCatch(
+				fetch(`/api/scenes/${sceneId}/nodes/${nodeId}`, {
+					method: 'DELETE',
+				}).then((res) => res.json())
+			)
+			if (error) {
+				console.error(error)
+			} else {
+				update((nodes) => nodes.filter((node) => node.id !== nodeId))
+			}
+		},
 	}
 }
 export const nodesActions = createNodeStore() // Store qui contient les infos BD des nodes

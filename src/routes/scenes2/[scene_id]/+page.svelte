@@ -8,6 +8,7 @@
 	import { nodesActions } from '@/stores/nodeStore'
 	let { data } = $props<{ data: PageData }>()
 	import { formatDBNodes } from '@/utils/svelteflow'
+	import { NodeType } from '@prisma/client'
 
 	onMount(() => {
 		nodesActions.setBaseNodes(data.nodes)
@@ -18,7 +19,15 @@
 			deletedNodes.map((node) => node.id),
 			deleteEdges.map((edge) => edge.id)
 		)
+
+		// Suppression des edges avant les nodes
+
+		deletedNodes.forEach((node) => {
+			nodesActions.deleteNode(node.id, data.scene_id)
+		})
 	}
+
+	// Déplacement et débounce
 
 	let nodes = $derived(formatDBNodes($nodesActions))
 </script>
@@ -27,7 +36,7 @@
 	<button
 		onclick={() =>
 			nodesActions.addNode({
-				type: 'EVENT',
+				type: NodeType.EVENT,
 				positionX: 0,
 				positionY: 0,
 				width: 300,

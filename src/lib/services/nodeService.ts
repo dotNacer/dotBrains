@@ -13,4 +13,14 @@ export const nodeService = {
 		if (error) throw error
 		return data
 	},
+
+	delete: async (nodeId: string) => {
+		const { data, error } = await tryCatch<PrismaNode>(
+			prisma.node.delete({
+				where: { id: nodeId },
+			})
+		)
+		if (error) throw error
+		return data
+	},
 }
