@@ -21,7 +21,6 @@ model Scene {
     @@index([createdAt])
 }
 
-//TODO : Rename scene into Event
 model SceneEvent {
   id          String               @id @default(cuid())
   title       String
@@ -82,7 +81,6 @@ model Node {
   sceneId     String
   scene       Scene    @relation("GroupNodes", fields: [sceneId], references: [id], onDelete: Cascade)
 
-  properties  Json?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
