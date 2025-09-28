@@ -4,6 +4,7 @@ import TestNode from '$lib/components/svelteflow/nodes/TestNode.svelte'
 
 export const nodeTypes: NodeTypes = {
 	EVENT: TestNode, // Utiliser un const, ou alors peut être l'enum prisma
+	MENU: TestNode,
 }
 
 export const defaultEdgeOptions = {

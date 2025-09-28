@@ -8,6 +8,7 @@ import { writable } from 'svelte/store'
 // En gros le store nodes get les informations grace au page server,
 // Dans ce store, on a avoir les fonctions correspondant a la BD
 // - Supprimer, Ajouter, editer des infos BD
+
 function createNodeStore() {
 	const { subscribe, set, update } = writable<PrismaNode[]>([])
 
@@ -15,7 +16,7 @@ function createNodeStore() {
 		subscribe,
 		set,
 		update,
-		setBaseNodes: (nodes: PrismaNode[]) => set(nodes),
+		setBaseNodes: (nodes: PrismaNode[]) => update((state) => [...state, ...nodes]),
 		addNode: async (dtoNode: CreateNodeDto) => {
 			// const node = nodeService.create(dtoNode) // Dans la prochaine version, utiliser un truc comme ça avec les RFC.
 
@@ -28,7 +29,7 @@ function createNodeStore() {
 			if (error) {
 				console.error(error)
 			} else {
-				update((nodes) => [...nodes, data as PrismaNode])
+				update((state) => [...state, data as PrismaNode])
 			}
 		},
 		deleteNode: async (nodeId: string, sceneId: string) => {
@@ -40,7 +41,7 @@ function createNodeStore() {
 			if (error) {
 				console.error(error)
 			} else {
-				update((nodes) => nodes.filter((node) => node.id !== data.id))
+				update((state) => state.filter((node) => node.id !== data.id))
 			}
 		},
 		updateNode: async (nodeId: string, sceneId: string, updates: Partial<UpdatableNode>) => {
@@ -53,8 +54,8 @@ function createNodeStore() {
 			if (error) {
 				console.error(error)
 			} else {
-				update((nodes) =>
-					nodes.map((node) =>
+				update((state) =>
+					state.map((node) =>
 						node.id === nodeId ? { ...node, ...(data as PrismaNode) } : node
 					)
 				)

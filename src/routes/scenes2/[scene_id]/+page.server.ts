@@ -2,11 +2,11 @@ import type { PageServerLoad } from './$types'
 import { sceneService2 } from '$lib/services/sceneService2'
 import { error } from '@sveltejs/kit'
 import type { Scene } from '$lib/types/Scene'
-import { formatDBEdges, formatDBNodes } from '$lib/utils/svelteflow'
+import { formatDBEdges } from '$lib/utils/svelteflow'
 
 export const load: PageServerLoad = async ({ params }) => {
 	const scene_id = params.scene_id
-	const scene = await sceneService2.get(scene_id)
+	const scene: Scene | null = await sceneService2.get(scene_id)
 	if (!scene) throw error(404, 'Scene not found')
 
 	//Workflow :
@@ -26,7 +26,6 @@ export const load: PageServerLoad = async ({ params }) => {
 	// Requirements du store : Add, Update, Delete, fonction get pour récupérer les données formatées
 
 	return {
-		scene_id,
 		scene: scene,
 		nodes: scene.nodes,
 		edges: formatDBEdges(scene.edges),
