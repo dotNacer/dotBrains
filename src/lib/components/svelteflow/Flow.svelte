@@ -13,23 +13,33 @@
 	import { nodeTypes, defaultEdgeOptions } from '$lib'
 	import { onMount } from 'svelte'
 	import { nodesActions } from '@/stores/nodeStore'
+	import { edgesActions } from '@/stores/edgeStore'
 	import { flowActions } from '@/stores/flowStore'
-	import { formatDBNodes } from '@/utils/svelteflow'
-	import { NodeType } from '@prisma/client'
+	import { formatDBNodes, formatDBEdges } from '@/utils/svelteflow'
+	import { NodeType, EdgeType } from '@prisma/client'
 	import type { Scene } from '$lib/types/Scene'
+	import type { Edge as PrismaEdge } from '@prisma/client'
 
-	let { scene, baseNodes, edges } = $props<{ scene: Scene; baseNodes: Node[]; edges: Edge[] }>()
+	let { scene, baseNodes, baseEdges } = $props<{
+		scene: Scene
+		baseNodes: Node[]
+		baseEdges: PrismaEdge[]
+	}>()
 
 	let isHandlingNodeHandling = $state(false)
 
 	onMount(() => {
 		nodesActions.setBaseNodes(baseNodes)
+		edgesActions.setBaseEdges(baseEdges)
 	})
 
 	const { screenToFlowPosition } = useSvelteFlow()
 
-	const handleDelete: OnDelete = async ({ nodes: deletedNodes, edges: deleteEdges }) => {
+	const handleDelete: OnDelete = async ({ nodes: deletedNodes, edges: deletedEdges }) => {
 		// Suppression des edges avant les nodes
+		deletedEdges.forEach((edge) => {
+			edgesActions.deleteEdge(edge.id, scene.id)
+		})
 
 		deletedNodes.forEach((node) => {
 			nodesActions.deleteNode(node.id, scene.id)
@@ -72,12 +82,25 @@
 		return baseNodes
 	})
 
+	let edges = $derived.by(() => {
+		return formatDBEdges($edgesActions)
+	})
+
 	const handleConnectEnd: OnConnectEnd = async (event, connectionState) => {
 		let isConnectingToANode = connectionState.isValid
 		if (isConnectingToANode) {
-			const fromId = connectionState.fromHandle?.nodeId
-			const toId = connectionState.toHandle?.nodeId
-			console.log(fromId, toId)
+			const sourceId = connectionState.fromHandle?.nodeId
+			const targetId = connectionState.toHandle?.nodeId
+
+			if (sourceId && targetId) {
+				await edgesActions.addEdge({
+					sourceId,
+					targetId,
+					sceneId: scene.id,
+					type: EdgeType.smoothstep,
+					animated: true,
+				})
+			}
 		} else {
 			if (!connectionState.to) return
 

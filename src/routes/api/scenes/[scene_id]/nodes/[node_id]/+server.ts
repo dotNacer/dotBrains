@@ -1,6 +1,7 @@
 import type { RequestEvent } from './$types'
 import { nodeService } from '$lib/services/nodeService'
 import { json } from '@sveltejs/kit'
+import type { Prisma } from '@prisma/client'
 
 export async function PATCH(event: RequestEvent): Promise<Response> {
 	try {
@@ -16,8 +17,7 @@ export async function PATCH(event: RequestEvent): Promise<Response> {
 		if (!body || typeof body !== 'object')
 			return json({ error: 'Invalid JSON body' }, { status: 400 })
 
-		// Ensure we don't allow changing id or sceneId via PATCH
-		const { id, sceneId, createdAt, updatedAt, ...updates } = body as Record<string, unknown>
+		const updates = body as Prisma.NodeUncheckedUpdateInput
 		if (Object.keys(updates).length === 0)
 			return json({ error: 'No updatable fields provided' }, { status: 400 })
 
@@ -27,7 +27,7 @@ export async function PATCH(event: RequestEvent): Promise<Response> {
 		if (existing.sceneId !== scene_id)
 			return json({ error: 'Node does not belong to scene' }, { status: 403 })
 
-		const updated = await nodeService.updatePartial(node_id, updates as any)
+		const updated = await nodeService.updatePartial(node_id, updates)
 		return json(updated, { status: 200 })
 	} catch (error) {
 		console.error('Error updating node:', error)

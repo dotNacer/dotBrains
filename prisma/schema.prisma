@@ -54,6 +54,15 @@ enum NodeType {
   GROUP
 }
 
+enum EdgeType {
+  default
+  straight
+  smoothstep
+  step
+  bezier
+  simplebezier
+}
+
 model Node {
   id          String    @id @default(cuid())
   type        NodeType
@@ -97,10 +106,9 @@ model Edge {
   source    Node      @relation("SourceNode", fields: [sourceId], references: [id])
   sourceId  String
   
-  type        String    @default("smoothstep") // Enum qui vient de svelteflow
+  type        EdgeType  @default(smoothstep) // Types standards de SvelteFlow
   animated    Boolean   @default(true)
   label       String?
-  conditions  Json? // Supprimer condition ?
 
   sceneId     String
   scene       Scene    @relation("GroupEdges", fields: [sceneId], references: [id], onDelete: Cascade)

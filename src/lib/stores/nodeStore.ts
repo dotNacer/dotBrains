@@ -1,8 +1,6 @@
 import type { CreateNodeDto } from '@/types/Node'
 import { tryCatch } from '@/utils'
-import type { Node as PrismaNode } from '@prisma/client'
-
-type UpdatableNode = Omit<PrismaNode, 'id' | 'sceneId' | 'createdAt' | 'updatedAt'>
+import type { Node as PrismaNode, Prisma } from '@prisma/client'
 import { writable } from 'svelte/store'
 // deux stores, mais c'est possiblement plus optimisable
 // En gros le store nodes get les informations grace au page server,
@@ -44,7 +42,11 @@ function createNodeStore() {
 				update((state) => state.filter((node) => node.id !== data.id))
 			}
 		},
-		updateNode: async (nodeId: string, sceneId: string, updates: Partial<UpdatableNode>) => {
+		updateNode: async (
+			nodeId: string,
+			sceneId: string,
+			updates: Prisma.NodeUncheckedUpdateInput
+		) => {
 			const { data, error } = await tryCatch(
 				fetch(`/api/scenes/${sceneId}/nodes/${nodeId}`, {
 					method: 'PATCH',

@@ -7,5 +7,5 @@
 </script>
 
 <SvelteFlowProvider>
-	<Flow scene={data.scene} baseNodes={data.nodes} edges={data.edges} />
+	<Flow scene={data.scene} baseNodes={data.nodes} baseEdges={data.edges} />
 </SvelteFlowProvider>
