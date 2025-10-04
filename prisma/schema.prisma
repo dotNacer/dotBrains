@@ -7,78 +7,115 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Scene {
-  id          Int                  @id @default(autoincrement())
-  title       String
-  description String
-  characters  CharactersOnScenes[]
-  nodes       Node[]
+    id String @id @default(cuid())
+    name String
+    description String
+    nodes Node[] @relation("GroupNodes")
+    edges Edge[] @relation("GroupEdges")
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([name])
+    @@index([createdAt])
 }
 
+model SceneEvent {
+  id          String               @id @default(cuid())
+  title       String
+  description String
+  characters  Character[]
+  
+  // Un SceneEvent DOIT avoir un Node
+  nodeId      String               @unique
+  node        Node                 @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+}
 model Character {
-  id          Int                  @id @default(autoincrement())
+  id          String               @id @default(cuid())
   name        String
   description String
-  scenes      CharactersOnScenes[]
+  scenes      SceneEvent[]
   references  Reference[]
 }
 
-model CharactersOnScenes {
-  characterId Int
-  sceneId     Int
-  character   Character @relation(fields: [characterId], references: [id])
-  scene       Scene     @relation(fields: [sceneId], references: [id], onDelete: Cascade)
-
-  @@id([characterId, sceneId])
-}
-
 model Reference {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   name        String
   description String
   url         String
-  characterId Int
+  characterId String
   character   Character @relation(fields: [characterId], references: [id])
 }
 
-model Note {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  tags      String[]
+// Flow Management
+enum NodeType {
+  EVENT
+  GROUP
 }
 
-// Flow Management
+enum EdgeType {
+  default
+  straight
+  smoothstep
+  step
+  bezier
+  simplebezier
+}
 
 model Node {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
+  type        NodeType
+  title       String?
+
+  // Position et taille
   positionX   Float
   positionY   Float
-  sceneId     Int?      @unique
-  scene       Scene?    @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  width       Float
+  height      Float
 
-  outgoing    Edge[]    @relation("FromNode")
-  incoming    Edge[]    @relation("ToNode")
-  properties  Json?
+  // Relations
+  incoming    Edge[]    @relation("SourceNode")
+  outgoing    Edge[]    @relation("TargetNode")
+  
+  // Pour les nodes de type EVENT
+  sceneEventId     String?      @unique
+  sceneEvent       SceneEvent?    // Un Node peut avoir 0 ou 1 SceneEvent
+
+  // Pour les nodes de type GROUP
+  parentId    String?
+  parent      Node?     @relation("NodeHierarchy", fields: [parentId], references: [id])
+  children    Node[]    @relation("NodeHierarchy")
+
+  sceneId     String
+  scene       Scene    @relation("GroupNodes", fields: [sceneId], references: [id], onDelete: Cascade)
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@index([type])
+  @@index([parentId])
+  @@index([sceneId])
+  @@index([createdAt])
 }
 
 model Edge {
-  id          Int       @id @default(autoincrement())
-  fromNode    Node      @relation("FromNode", fields: [fromNodeId], references: [id])
-  fromNodeId  Int
-  toNode      Node      @relation("ToNode", fields: [toNodeId], references: [id])
-  toNodeId    Int
-  type        String    @default("default")
-  animated    Boolean   @default(false)
+  id          String    @id @default(cuid())
+  target      Node      @relation("TargetNode", fields: [targetId], references: [id])
+  targetId    String
+  source    Node      @relation("SourceNode", fields: [sourceId], references: [id])
+  sourceId  String
+  
+  type        EdgeType  @default(smoothstep) // Types standards de SvelteFlow
+  animated    Boolean   @default(true)
   label       String?
-  conditions  Json?
+
+  sceneId     String
+  scene       Scene    @relation("GroupEdges", fields: [sceneId], references: [id], onDelete: Cascade)
+
   properties  Json?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  @@unique([fromNodeId, toNodeId])
+  @@unique([sourceId, targetId])
 }

@@ -1,11 +1,10 @@
 <script lang="ts">
     import { Button } from '$lib/components/ui/button/index.js'
-    import { Component, Undo2, Plus } from 'lucide-svelte'
+    import { Component, Undo2, Plus, Group } from 'lucide-svelte'
     import { addNode } from '$lib/services/nodeService'
     import { useSvelteFlow } from '@xyflow/svelte'
     import { sceneCreationStore } from '$lib/stores/sceneCreationStore'
     import { get } from 'svelte/store'
-
     let { characters } = $props()
     const { screenToFlowPosition } = useSvelteFlow()
 
@@ -49,6 +48,25 @@
             nodeRef: null,
         })
     }
+
+    function handleAddGroup() {
+        // Get the center of the viewport
+        const centerPosition = screenToFlowPosition({
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2,
+        })
+
+        // Add a group node with default settings
+        const newGroupId = addNode(
+            'GROUP',
+            {
+                group_name: 'New Group',
+                width: 400,
+                height: 300,
+            },
+            centerPosition
+        )
+    }
 </script>
 
 <div class="absolute bottom-0 w-full flex justify-center items-center">
@@ -58,6 +76,9 @@
         >
         <Button variant="outline" class="gap-2" onclick={handleAddNode}
             ><Plus class="w-4 h-4" />Add a node</Button
+        >
+        <Button variant="outline" class="gap-2" onclick={handleAddGroup}
+            ><Group class="w-4 h-4" />Add a group</Button
         >
         <Button variant="outline" class="gap-2 hover:bg-[var(--base)]"
             ><Component class="w-4 h-4" />Placeholder</Button

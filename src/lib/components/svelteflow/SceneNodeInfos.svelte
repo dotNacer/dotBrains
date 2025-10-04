@@ -3,11 +3,7 @@
     import { Label } from '$lib/components/ui/label'
 
     import * as Sheet from '$lib/components/ui/sheet/'
-    import { onMount } from 'svelte'
     let { scene } = $props<{ scene: Scene }>()
-    onMount(() => {
-        console.log(scene)
-    })
 </script>
 
 <Sheet.Root>

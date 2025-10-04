@@ -4,13 +4,11 @@ import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { formSchema as FormSchemaScene } from '$lib/schemas/scenes'
 import type { CreateNodeDto } from '$lib/types/Node'
-
-import { nodes as nodesStore } from '$lib/stores/nodeStore'
-
 import { characterService } from '$lib/services/characterService'
 import { sceneService } from '$lib/services/sceneService'
-import { nodeService } from '$lib/services/nodeService'
+import { nodeService, mapNodeType } from '$lib/services/nodeService'
 import { edgeService } from '$lib/services/edgeService'
+import { nodes } from '$lib/stores/nodeStore'
 
 export const load: PageServerLoad = async ({ fetch }) => {
     const [characters, scenes, dbNodes, dbEdges] = await Promise.all([
@@ -23,11 +21,13 @@ export const load: PageServerLoad = async ({ fetch }) => {
     // Transform dbNodes into the format expected by SvelteFlow
     const flowNodes = (dbNodes as any[]).map((node) => ({
         id: node.id.toString(),
-        type: 'scene',
+        type: mapNodeType(node.type),
         position: {
             x: node.positionX,
             y: node.positionY,
         },
+        width: node.width,
+        height: node.height,
         data: {
             properties: node.properties,
             scene: node.scene,
@@ -64,8 +64,9 @@ export const actions: Actions = {
 
             return {
                 success: true,
-                message: 'Node created successfully!',
-                node_id: node.id,
+                data: {
+                    node_id: node.id,
+                },
             }
         } catch (error) {
             console.error('Error in create node action:', error)

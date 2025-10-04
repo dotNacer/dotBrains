@@ -1,46 +1,46 @@
-import { json } from '@sveltejs/kit'
-import { PrismaClient } from '@prisma/client'
 import type { RequestEvent } from './$types'
+import type { SceneDto } from '$lib/types/Scene'
+import { sceneService2 } from '$lib/services/sceneService2'
+import { json } from '@sveltejs/kit'
+import { z } from 'zod'
 
-const prisma = new PrismaClient()
+// Define validation schema for Scene creation
+//TODO: Mettre ça dans un fichier
+const CreateSceneDtoSchema = z.object({
+	name: z.string().min(1, 'Name is required'),
+	description: z.string().optional().default(''),
+})
 
-export async function DELETE({ url }: RequestEvent) {
-    const id = url.searchParams.get('id')
-    if (!id) {
-        return new Response(JSON.stringify({ error: 'ID is required' }), {
-            status: 400,
-        })
-    }
+export async function GET(): Promise<Response> {
+	try {
+		const scenes = await sceneService2.getAll()
+		return json(scenes, { status: 200 })
+	} catch (error) {
+		console.error('Error fetching scenes:', error)
+		return json({ error: 'Failed to fetch scenes' }, { status: 500 })
+	}
+}
 
-    console.log('deleting scene', id)
+export async function POST(event: RequestEvent): Promise<Response> {
+	try {
+		const rawData = await event.request.json()
 
-    try {
-        // Vérifier si la scène existe avant de la supprimer
-        const scene = await prisma.scene.findUnique({
-            where: {
-                id: parseInt(id),
-            },
-        })
+		// Validate the incoming data
+		const validationResult = CreateSceneDtoSchema.safeParse(rawData)
 
-        if (!scene) {
-            return new Response(JSON.stringify({ error: 'Scene not found' }), {
-                status: 404,
-            })
-        }
+		if (!validationResult.success) {
+			return json(
+				{ error: 'Invalid request data', details: validationResult.error.errors },
+				{ status: 400 }
+			)
+		}
 
-        await prisma.scene.delete({
-            where: {
-                id: parseInt(id),
-            },
-        })
-        return json({ message: 'Scene deleted successfully' })
-    } catch (error) {
-        console.error('Error deleting scene:', error)
-        return new Response(
-            JSON.stringify({ error: 'Failed to delete scene' }),
-            {
-                status: 500,
-            }
-        )
-    }
+		const { name, description } = validationResult.data
+		const scene = await sceneService2.create({ name, description })
+		return json(scene, { status: 201 })
+	} catch (error) {
+		console.error('Error creating scene:', error)
+		const errorMessage = error instanceof Error ? error.message : 'Failed to create scene'
+		return json({ error: errorMessage }, { status: 500 })
+	}
 }

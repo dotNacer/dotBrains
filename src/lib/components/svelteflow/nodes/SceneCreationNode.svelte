@@ -77,17 +77,35 @@
             })
 
             const responseData = await response.json()
+            console.log('Response from server:', responseData)
 
             if (response.ok) {
-                toast.success('Node created successfully!')
-                // Parser la réponse qui est une chaîne JSON
-                const parsedData = JSON.parse(responseData.data)
-                // L'ID du node se trouve à l'index 3 du tableau
-                const nodeId = parsedData[3].toString()
-
-                updateNodeId(id, nodeId)
-
-                updateNodeToCustom(nodeId, sceneData)
+                try {
+                    // Safely parse the response data
+                    let parsedData
+                    if (typeof responseData.data === 'string') {
+                        parsedData = JSON.parse(responseData.data)
+                    } else {
+                        parsedData = responseData.data
+                    }
+                    
+                    // Extract nodeId with proper fallback
+                    let nodeId = parsedData?.payload?.nodeId || parsedData?.payload?.[3]
+                    
+                    if (nodeId) {
+                        // Normalize nodeId to string
+                        nodeId = String(nodeId)
+                        updateNodeId(id, nodeId)
+                        updateNodeToCustom(nodeId, sceneData)
+                        toast.success('Node created successfully!')
+                    } else {
+                        toast.error('Invalid response format: missing nodeId')
+                        console.error('Invalid response format:', responseData)
+                    }
+                } catch (parseError) {
+                    console.error('Error parsing response:', parseError)
+                    toast.error('Failed to parse server response')
+                }
             } else {
                 toast.error('Failed to create node')
             }
