@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestEvent } from './$types'
 import type { CreateEdgeDto } from '$lib/types/Edge'
-import { edgeService } from '@/services/edgeService'
+import { edgeService } from '$lib/services/edgeService'
 
 export async function POST(event: RequestEvent): Promise<Response> {
 	try {

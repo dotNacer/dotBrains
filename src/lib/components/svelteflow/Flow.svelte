@@ -12,10 +12,10 @@
 	} from '@xyflow/svelte'
 	import { nodeTypes, defaultEdgeOptions } from '$lib'
 	import { onMount } from 'svelte'
-	import { nodesActions } from '@/stores/nodeStore'
-	import { edgesActions } from '@/stores/edgeStore'
-	import { flowActions } from '@/stores/flowStore'
-	import { formatDBNodes, formatDBEdges } from '@/utils/svelteflow'
+	import { nodesActions } from '$lib/stores/nodeStore'
+	import { edgesActions } from '$lib/stores/edgeStore'
+	import { flowActions } from '$lib/stores/flowStore'
+	import { formatDBNodes, formatDBEdges } from '$lib/utils/svelteflow'
 	import { NodeType, EdgeType } from '@prisma/client'
 	import type { Scene } from '$lib/types/Scene'
 	import type { Edge as PrismaEdge } from '@prisma/client'
@@ -157,7 +157,7 @@
 		onpaneclick={handlePaneClick}
 	>
 		<div class="absolute bottom-0 flex w-full items-center justify-center">
-			<div class="z-30 mb-4 rounded-xl border bg-card p-4">
+			<div class="bg-card z-30 mb-4 rounded-xl border p-4">
 				{nodes.length}
 				<p>{$flowActions.menuNode.visible ? 'Menu ouvert' : 'Menu fermé'}</p>
 				<p>{$flowActions.menuNode.position.x}</p>

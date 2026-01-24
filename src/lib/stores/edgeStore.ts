@@ -1,5 +1,5 @@
-import type { CreateEdgeDto } from '@/types/Edge'
-import { tryCatch } from '@/utils'
+import type { CreateEdgeDto } from '$lib/types/Edge'
+import { tryCatch } from '$lib/utils'
 import type { Edge as PrismaEdge, Prisma } from '@prisma/client'
 import { writable } from 'svelte/store'
 

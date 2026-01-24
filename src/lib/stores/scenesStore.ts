@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import type { Scene, SceneDto } from '$lib/types/Scene'
-import { tryCatch } from '@/utils'
+import { tryCatch } from '$lib/utils'
 
 function createScenesStore() {
 	const { subscribe, set, update } = writable<Scene[]>([])

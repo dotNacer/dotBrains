@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestEvent, RequestHandler } from './$types'
 import type { CreateNodeDto } from '$lib/types/Node'
-import { nodeService } from '@/services/nodeService'
+import { nodeService } from '$lib/services/nodeService'
 
 export async function POST(event: RequestEvent): Promise<Response> {
 	try {

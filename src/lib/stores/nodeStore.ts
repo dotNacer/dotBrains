@@ -1,5 +1,5 @@
-import type { CreateNodeDto } from '@/types/Node'
-import { tryCatch } from '@/utils'
+import type { CreateNodeDto } from '$lib/types/Node'
+import { tryCatch } from '$lib/utils'
 import type { Node as PrismaNode, Prisma } from '@prisma/client'
 import { writable } from 'svelte/store'
 // deux stores, mais c'est possiblement plus optimisable

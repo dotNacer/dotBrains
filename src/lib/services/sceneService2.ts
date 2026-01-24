@@ -1,7 +1,7 @@
 import prisma from '$lib/server/prisma'
 import type { Scene, SceneDto } from '$lib/types/Scene'
 import type { Scene as PrismaScene } from '@prisma/client'
-import { tryCatch } from '@/utils'
+import { tryCatch } from '$lib/utils'
 
 //Type de store = PrismaScene[] ? vu qu'osef d'avoir les nodes et edges ?
 export const sceneService2 = {
