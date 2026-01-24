@@ -42,8 +42,8 @@
     minWidth={100}
     minHeight={30}
     isVisible={selected}
-    handleClass="!w-2 !h-2 !bg-background !border-2 !border-border"
-    lineClass="!border !border-border"
+    handleClass="w-2! h-2! bg-background! border-2! border-border!"
+    lineClass="border! border-border!"
     onResizeEnd={handleResizeEnd}
 />
 <div

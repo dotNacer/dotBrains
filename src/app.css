@@ -1,6 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap')
+layer(base);
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap')
+layer(base);
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap')
+layer(base);
+
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@custom-variant dark (&:is(.dark *));
+
+@config '../tailwind.config.ts';
 
 @layer base {
 	:root {
@@ -13,10 +22,6 @@
 		font-family: 'Geist Mono', monospace !important;
 	}
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 @layer base {
 	:root {
 		--background: 0 0% 100%;
@@ -71,6 +76,6 @@
 	}
 
 	.classic-handle {
-		@apply !h-2 !w-2 !rounded-none;
+		@apply h-2! w-2! rounded-none!;
 	}
 }

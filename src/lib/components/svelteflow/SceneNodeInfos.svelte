@@ -12,7 +12,7 @@
             class=" group-hover:border-l group-hover:border-b bg-accent dark:bg-stone-600 w-0 h-0 group-hover:w-8 group-hover:h-8 striped-background-light transition-[width & height] duration-150 ease-in-out"
         ></div>
     </Sheet.Trigger>
-    <Sheet.Content class="w-[200rem]">
+    <Sheet.Content class="w-800">
         <Sheet.Title>{scene.title}</Sheet.Title>
         <Label>Description</Label>
         <p>{scene.description}</p>

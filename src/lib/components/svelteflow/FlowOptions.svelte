@@ -70,7 +70,7 @@
 </script>
 
 <div class="absolute bottom-0 w-full flex justify-center items-center">
-    <div class="bg-card p-4 rounded-xl border-[1px] mb-4 z-30">
+    <div class="bg-card p-4 rounded-xl border mb-4 z-30">
         <Button variant="outline" class="gap-2 z-30"
             ><Undo2 class="w-4 h-4" />Undo</Button
         >
@@ -80,7 +80,7 @@
         <Button variant="outline" class="gap-2" onclick={handleAddGroup}
             ><Group class="w-4 h-4" />Add a group</Button
         >
-        <Button variant="outline" class="gap-2 hover:bg-[var(--base)]"
+        <Button variant="outline" class="gap-2 hover:bg-(--base)"
             ><Component class="w-4 h-4" />Placeholder</Button
         >
     </div>

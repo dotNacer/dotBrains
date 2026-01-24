@@ -143,7 +143,7 @@
 	</button>
 
 	<SvelteFlow
-		class="!bg-card"
+		class="bg-card!"
 		{nodes}
 		{edges}
 		{nodeTypes}
@@ -157,7 +157,7 @@
 		onpaneclick={handlePaneClick}
 	>
 		<div class="absolute bottom-0 flex w-full items-center justify-center">
-			<div class="z-30 mb-4 rounded-xl border-[1px] bg-card p-4">
+			<div class="z-30 mb-4 rounded-xl border bg-card p-4">
 				{nodes.length}
 				<p>{$flowActions.menuNode.visible ? 'Menu ouvert' : 'Menu fermé'}</p>
 				<p>{$flowActions.menuNode.position.x}</p>
