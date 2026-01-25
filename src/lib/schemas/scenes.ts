@@ -1,9 +1,8 @@
 import { z } from 'zod'
 
-export const formSchema = z.object({
-    title: z.string().min(1, 'Le titre est requis'),
-    description: z.string().min(1, 'La description est requise'),
-    characterIds: z.array(z.number()).default([]),
+export const createSceneSchema = z.object({
+	name: z.string().min(1, 'Le nom est requis'),
+	description: z.string().default(''),
 })
 
-export type FormSchema = typeof formSchema
+export type CreateSceneSchema = z.infer<typeof createSceneSchema>

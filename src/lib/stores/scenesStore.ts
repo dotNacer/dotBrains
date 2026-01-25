@@ -1,6 +1,8 @@
 import { writable } from 'svelte/store'
-import type { Scene, SceneDto } from '$lib/types/Scene'
+import type { CreateSceneSchema } from '$lib/schemas/scenes'
 import { tryCatch } from '$lib/utils'
+import { createScene, deleteScene, getScenes, updateScene } from '$lib/api/scenes.remote'
+import type { Scene } from '@prisma/client'
 
 function createScenesStore() {
 	const { subscribe, set, update } = writable<Scene[]>([])
@@ -10,52 +12,41 @@ function createScenesStore() {
 		set,
 		update,
 		fetch: async () => {
-			const { data, error } = await tryCatch(fetch('/api/scenes').then((res) => res.json()))
+			const { data, error } = await tryCatch(getScenes())
 			if (error) {
-				console.error(error)
+				console.error('Error fetching scenes:', error)
 			} else {
 				set(data as Scene[])
 			}
 		},
-		create: async (scene: SceneDto) => {
-			const { data, error } = await tryCatch(
-				fetch('/api/scenes', {
-					method: 'POST',
-					body: JSON.stringify(scene),
-				}).then((res) => res.json())
-			)
+		create: async (scene: CreateSceneSchema) => {
+			const { data, error } = await tryCatch(createScene(scene))
 			if (error) {
-				console.error(error)
-			} else {
-				update((scenes) => [...scenes, data as Scene])
-				return data as Scene
+				console.error('Error creating scene:', error)
+				throw error
+			} else if (data) {
+				update((scenes) => [data, ...scenes])
+				return data
 			}
 		},
-		edit: async (scene: SceneDto, sceneId: string) => {
-			const { data, error } = await tryCatch(
-				fetch(`/api/scenes/${sceneId}`, {
-					method: 'PUT',
-					body: JSON.stringify(scene as SceneDto),
-				}).then((res) => res.json())
-			)
+		edit: async (id: string, updates: Partial<CreateSceneSchema>) => {
+			const { data, error } = await tryCatch(updateScene({ id, data: updates }))
 			if (error) {
-				console.error(error)
-			} else {
-				update((scenes) => scenes.map((s) => (s.id === sceneId ? (data as Scene) : s)))
-				return data as Scene
+				console.error('Error updating scene:', error)
+				throw error
+			} else if (data) {
+				update((scenes) => scenes.map((s) => (s.id === id ? data : s)))
+				return data
 			}
 		},
 		delete: async (sceneId: string) => {
-			const { data, error } = await tryCatch(
-				fetch(`/api/scenes/${sceneId}`, {
-					method: 'DELETE',
-				}).then((res) => res.json())
-			)
+			const { data, error } = await tryCatch(deleteScene(sceneId))
 			if (error) {
-				console.error(error)
+				console.error('Error deleting scene:', error)
+				throw error
 			} else {
 				update((scenes) => scenes.filter((s) => s.id !== sceneId))
-				return data as Scene
+				return data
 			}
 		},
 	}

@@ -2,7 +2,7 @@
 	import { scenesStore } from '$lib/stores/scenesStore'
 	import { onMount } from 'svelte'
 	import { Button } from '$lib/components/ui/button'
-	import type { Scene } from '$lib/types/Scene'
+	import type { Scene } from '@prisma/client'
 	import { goto } from '$app/navigation'
 	onMount(async () => {
 		await scenesStore.fetch()
@@ -23,13 +23,10 @@
 
 		// Only update if values have changed
 		if (newName !== scene.name || newDescription !== scene.description) {
-			scenesStore.edit(
-				{
-					name: newName,
-					description: newDescription,
-				},
-				scene.id
-			)
+			scenesStore.edit(scene.id, {
+				name: newName,
+				description: newDescription,
+			})
 		}
 	}
 </script>
