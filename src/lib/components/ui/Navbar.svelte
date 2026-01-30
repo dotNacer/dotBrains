@@ -11,10 +11,7 @@
 	let isDragging = $state(false)
 
 	const navigationLinks = [
-		{ href: '/svelteflow', icon: Workflow, label: 'Flow' },
-		{ href: '/characters', icon: Users, label: 'Characters' },
 		{ href: '/scenes', icon: BookMarked, label: 'Scenes' },
-		{ href: '/scenes2', icon: BookMarked, label: 'Scenes2' },
 	]
 
 	onMount(() => {

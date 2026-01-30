@@ -17,7 +17,7 @@
 	import { flowActions } from '$lib/stores/flowStore'
 	import { formatDBNodes, formatDBEdges } from '$lib/utils/svelteflow'
 	import { NodeType, EdgeType } from '@prisma/client'
-	import type { Scene } from '$lib/types/Scene'
+	import type { Scene } from '@prisma/client'
 	import type { Edge as PrismaEdge } from '@prisma/client'
 
 	let { scene, baseNodes, baseEdges } = $props<{

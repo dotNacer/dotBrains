@@ -1,11 +1,9 @@
-import type { CreateNodeDto } from '$lib/types/Node'
-import { tryCatch } from '$lib/utils'
-import type { Node as PrismaNode, Prisma } from '@prisma/client'
 import { writable } from 'svelte/store'
-// deux stores, mais c'est possiblement plus optimisable
-// En gros le store nodes get les informations grace au page server,
-// Dans ce store, on a avoir les fonctions correspondant a la BD
-// - Supprimer, Ajouter, editer des infos BD
+import type { Node as PrismaNode } from '@prisma/client'
+import { tryCatch } from '$lib/utils'
+import { createNode, deleteNode, updateNode } from '$lib/api/nodes.remote'
+import type { CreateNodeSchema } from '$lib/schemas/nodes'
+import { z } from 'zod'
 
 function createNodeStore() {
 	const { subscribe, set, update } = writable<PrismaNode[]>([])
@@ -14,55 +12,55 @@ function createNodeStore() {
 		subscribe,
 		set,
 		update,
-		setBaseNodes: (nodes: PrismaNode[]) => update((state) => [...state, ...nodes]),
-		addNode: async (dtoNode: CreateNodeDto) => {
-			// const node = nodeService.create(dtoNode) // Dans la prochaine version, utiliser un truc comme ça avec les RFC.
+		setBaseNodes: (nodes: PrismaNode[]) => set(nodes),
+		addNode: async (dtoNode: z.infer<CreateNodeSchema>) => {
+			const { data, error } = await tryCatch(createNode(dtoNode))
 
-			const { data, error } = await tryCatch(
-				fetch(`/api/scenes/${dtoNode.sceneId}/nodes`, {
-					method: 'POST',
-					body: JSON.stringify(dtoNode),
-				}).then((res) => res.json())
-			)
 			if (error) {
-				console.error(error)
-			} else {
-				update((state) => [...state, data as PrismaNode])
+				console.error('Error creating node:', error)
+				throw error
+			} else if (data) {
+				update((state) => [...state, data])
+				return data
 			}
 		},
 		deleteNode: async (nodeId: string, sceneId: string) => {
-			const { data, error } = await tryCatch(
-				fetch(`/api/scenes/${sceneId}/nodes/${nodeId}`, {
-					method: 'DELETE',
-				}).then((res) => res.json())
-			)
+			const { data, error } = await tryCatch(deleteNode({ id: nodeId, sceneId }))
+
 			if (error) {
-				console.error(error)
-			} else {
-				update((state) => state.filter((node) => node.id !== data.id))
+				console.error('Error deleting node:', error)
+				throw error
+			} else if (data) {
+				update((state) => state.filter((node) => node.id !== nodeId))
+				return data
 			}
 		},
 		updateNode: async (
 			nodeId: string,
 			sceneId: string,
-			updates: Prisma.NodeUncheckedUpdateInput
+			updates: Partial<z.infer<CreateNodeSchema>>
 		) => {
 			const { data, error } = await tryCatch(
-				fetch(`/api/scenes/${sceneId}/nodes/${nodeId}`, {
-					method: 'PATCH',
-					body: JSON.stringify(updates),
-				}).then((res) => res.json())
+				updateNode({
+					id: nodeId,
+					sceneId,
+					data: updates
+				})
 			)
+
 			if (error) {
-				console.error(error)
-			} else {
+				console.error('Error updating node:', error)
+				throw error
+			} else if (data) {
 				update((state) =>
 					state.map((node) =>
-						node.id === nodeId ? { ...node, ...(data as PrismaNode) } : node
+						node.id === nodeId ? data : node
 					)
 				)
+				return data
 			}
 		},
 	}
 }
-export const nodesActions = createNodeStore() // Store qui contient les infos BD des nodes
+
+export const nodesActions = createNodeStore()

@@ -1,31 +1,50 @@
 <script lang="ts">
-    import type { PageData } from './$types'
-    import SceneCard from '$lib/components/scene-card.svelte'
-    import SceneCreateForm from '$lib/components/forms/scene-create-form.svelte'
+	import { scenesStore } from '$lib/stores/scenesStore'
+	import { onMount } from 'svelte'
+	import { Button } from '$lib/components/ui/button'
+	import type { Scene } from '@prisma/client'
+	import { goto } from '$app/navigation'
+	onMount(async () => {
+		await scenesStore.fetch()
+	})
 
-    let { data } = $props<{ data: PageData }>()
+	function createScene() {
+		scenesStore.create({
+			name: 'Scène 1',
+			description: 'Description de la scène 1',
+		})
+	}
 
-    let scenesList = $derived(data.scenes)
-    let charactersList = $derived(data.characters)
+	function editScene(scene: Scene) {
+		// Prompt for new values (replace with modal/form in production)
+		const newName = prompt('Enter new name for the scene:', scene.name) || scene.name
+		const newDescription =
+			prompt('Enter new description:', scene.description || '') || scene.description
+
+		// Only update if values have changed
+		if (newName !== scene.name || newDescription !== scene.description) {
+			scenesStore.edit(scene.id, {
+				name: newName,
+				description: newDescription,
+			})
+		}
+	}
 </script>
 
-<div class="space-y-2">
-    <h1 class="font-semibold text-3xl">Scenes</h1>
-    <div class="gap-4 w-full flex flex-wrap">
-        {#if scenesList.length === 0}
-            <p>Aucune scène trouvée</p>
-        {:else}
-            {#each scenesList as scene}
-                <SceneCard
-                    {scene}
-                    editForm={data.editForm}
-                    characters={charactersList}
-                />
-            {/each}
-        {/if}
-    </div>
+<p>Créer les scènes</p>
 
-    <div class="w-[400px] p-4 bg-card border border-border">
-        <SceneCreateForm data={{ ...data.form, characters: charactersList }} />
-    </div>
-</div>
+<Button onclick={createScene}>Créer une scène</Button>
+{#each $scenesStore as scene}
+	<div
+		class="flex gap-2"
+		onclick={() => goto(`/scenes/${scene.id}`)}
+		role="button"
+		tabindex="0"
+		onkeydown={(e) => e.key === 'Enter' && goto(`/scenes/${scene.id}`)}
+	>
+		<p>{scene.name}</p>
+		<p>{scene.id}</p>
+	</div>
+	<button onclick={() => editScene(scene)}>Modifier</button>
+	<button onclick={() => scenesStore.delete(scene.id)}>Supprimer</button>
+{/each}

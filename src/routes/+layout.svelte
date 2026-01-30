@@ -10,7 +10,7 @@
 	<Navbar />
 
 	<!-- Contenu principal -->
-	<div class={`flex-1 ${$page.url.pathname.startsWith('/scenes2') ? '' : 'p-4'}`}>
+	<div class={`flex-1 p-4`}>
 		<Toaster />
 		{@render children()}
 	</div>

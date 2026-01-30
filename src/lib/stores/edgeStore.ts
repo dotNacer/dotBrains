@@ -1,7 +1,9 @@
-import type { CreateEdgeDto } from '$lib/types/Edge'
-import { tryCatch } from '$lib/utils'
-import type { Edge as PrismaEdge, Prisma } from '@prisma/client'
 import { writable } from 'svelte/store'
+import type { Edge as PrismaEdge } from '@prisma/client'
+import { tryCatch } from '$lib/utils'
+import { createEdge, deleteEdge, updateEdge } from '$lib/api/edges.remote'
+import type { CreateEdgeSchema } from '$lib/schemas/edges'
+import { z } from 'zod'
 
 function createEdgeStore() {
 	const { subscribe, set, update } = writable<PrismaEdge[]>([])
@@ -10,54 +12,55 @@ function createEdgeStore() {
 		subscribe,
 		set,
 		update,
-		setBaseEdges: (edges: PrismaEdge[]) => update((state) => [...state, ...edges]),
-		addEdge: async (dtoEdge: CreateEdgeDto) => {
-			const { data, error } = await tryCatch(
-				fetch(`/api/scenes/${dtoEdge.sceneId}/edges`, {
-					method: 'POST',
-					body: JSON.stringify(dtoEdge),
-				}).then((res) => res.json())
-			)
+		setBaseEdges: (edges: PrismaEdge[]) => set(edges),
+		addEdge: async (dtoEdge: z.infer<CreateEdgeSchema>) => {
+			const { data, error } = await tryCatch(createEdge(dtoEdge))
+			
 			if (error) {
-				console.error(error)
-			} else {
-				update((state) => [...state, data as PrismaEdge])
+				console.error('Error creating edge:', error)
+				throw error
+			} else if (data) {
+				update((state) => [...state, data])
+				return data
 			}
 		},
 		deleteEdge: async (edgeId: string, sceneId: string) => {
-			const { data, error } = await tryCatch(
-				fetch(`/api/scenes/${sceneId}/edges/${edgeId}`, {
-					method: 'DELETE',
-				}).then((res) => res.json())
-			)
+			const { data, error } = await tryCatch(deleteEdge({ id: edgeId, sceneId }))
+			
 			if (error) {
-				console.error(error)
-			} else {
-				update((state) => state.filter((edge) => edge.id !== data.id))
+				console.error('Error deleting edge:', error)
+				throw error
+			} else if (data) {
+				update((state) => state.filter((edge) => edge.id !== edgeId))
+				return data
 			}
 		},
 		updateEdge: async (
 			edgeId: string,
 			sceneId: string,
-			updates: Prisma.EdgeUncheckedUpdateInput
+			updates: Partial<z.infer<CreateEdgeSchema>>
 		) => {
 			const { data, error } = await tryCatch(
-				fetch(`/api/scenes/${sceneId}/edges/${edgeId}`, {
-					method: 'PATCH',
-					body: JSON.stringify(updates),
-				}).then((res) => res.json())
+				updateEdge({ 
+					id: edgeId, 
+					sceneId, 
+					data: updates 
+				})
 			)
+			
 			if (error) {
-				console.error(error)
-			} else {
+				console.error('Error updating edge:', error)
+				throw error
+			} else if (data) {
 				update((state) =>
 					state.map((edge) =>
-						edge.id === edgeId ? { ...edge, ...(data as PrismaEdge) } : edge
+						edge.id === edgeId ? data : edge
 					)
 				)
+				return data
 			}
 		},
 	}
 }
 
-export const edgesActions = createEdgeStore() // Store qui contient les infos BD des edges
+export const edgesActions = createEdgeStore()

@@ -1,12 +1,19 @@
 import { z } from 'zod'
-import { EdgeType, type Prisma } from '@prisma/client'
+import { EdgeType } from '@prisma/client'
 
-export const formSchema = z.object({
-	fromNodeId: z.number(),
-	toNodeId: z.number(),
-	type: z.nativeEnum(EdgeType).default(EdgeType.smoothstep),
-	animated: z.boolean().default(false),
-	label: z.string().optional(),
-	conditions: z.any() as unknown as z.ZodType<Prisma.InputJsonValue>,
-	properties: z.any() as unknown as z.ZodType<Prisma.InputJsonValue>,
+export const createEdgeSchema = z.object({
+    sourceId: z.string(),
+    targetId: z.string(),
+    sceneId: z.string(),
+    type: z.nativeEnum(EdgeType).default(EdgeType.smoothstep),
+    animated: z.boolean().default(true),
+    label: z.string().optional().nullable(),
+})
+
+export type CreateEdgeSchema = typeof createEdgeSchema
+
+export const updateEdgeSchema = z.object({
+    id: z.string(),
+    sceneId: z.string(),
+    data: createEdgeSchema.partial().omit({ sceneId: true, sourceId: true, targetId: true }),
 })

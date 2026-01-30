@@ -1,11 +1,21 @@
 import { z } from 'zod'
-import type { Prisma } from '@prisma/client'
+import { NodeType } from '@prisma/client'
 
-export const formSchema = z.object({
+export const createNodeSchema = z.object({
+    type: z.nativeEnum(NodeType),
+    title: z.string().optional().nullable(),
     positionX: z.number(),
     positionY: z.number(),
-    sceneId: z.number(),
-    outgoingId: z.array(z.number()).default([]),
-    incomingId: z.array(z.number()).default([]),
-    properties: z.any() as unknown as z.ZodType<Prisma.InputJsonValue>,
+    width: z.number(),
+    height: z.number(),
+    parentId: z.string().optional().nullable(),
+    sceneId: z.string(),
+})
+
+export type CreateNodeSchema = typeof createNodeSchema
+
+export const updateNodeSchema = z.object({
+    id: z.string(),
+    sceneId: z.string(),
+    data: createNodeSchema.partial().omit({ sceneId: true }),
 })
