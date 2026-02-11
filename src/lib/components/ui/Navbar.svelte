@@ -3,7 +3,7 @@
 	import { theme } from '$lib/stores/theme'
 	import Logo from '$lib/components/ui/Logo.svelte'
 	import { onMount } from 'svelte'
-	import { Workflow, BookMarked, Users, PanelRightOpen } from 'lucide-svelte'
+	import {  BookMarked, PanelRightOpen } from 'lucide-svelte'
 	import { page } from '$app/stores'
 	import { fly, slide } from 'svelte/transition'
 	let isExpanded = $state(true)

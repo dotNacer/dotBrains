@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Handle, Position, type NodeProps } from '@xyflow/svelte'
-    import type { Scene } from '$lib/types/Scene'
+    import type { Scene } from '@prisma/client'
     import { Badge } from '$lib/components/ui/badge'
     import SceneNodeInfos from '../SceneNodeInfos.svelte'
     import { NodeResizer } from '@xyflow/svelte'

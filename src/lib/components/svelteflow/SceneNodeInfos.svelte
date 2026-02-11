@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Scene } from '$lib/types/Scene'
+	import type { Scene } from '@prisma/client'
 	import { Label } from '$lib/components/ui/label'
 
 	import * as Sheet from '$lib/components/ui/sheet/'

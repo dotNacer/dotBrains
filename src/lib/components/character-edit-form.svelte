@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as Form from '$lib/components/ui/form'
     import { Input } from '$lib/components/ui/input'
-    import { formSchema } from '$lib/schemas/characters'
+    import { formSchema,  } from '$lib/schemas/characters'
     import { Check } from 'lucide-svelte'
     import {
         type SuperValidated,
@@ -12,7 +12,7 @@
     import { toast } from 'svelte-sonner'
     import SceneSelector from '$lib/components/forms/scene-selector.svelte'
     import type { Character } from '$lib/types/Character'
-    import type { Scene } from '$lib/types/Scene'
+    import type { Scene } from '@prisma/client'
     import { slide } from 'svelte/transition'
 
     let { character, formData, onSubmit, scenes } = $props<{

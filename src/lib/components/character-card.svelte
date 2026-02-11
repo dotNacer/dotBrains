@@ -6,7 +6,7 @@
     import type { SuperValidated, Infer } from 'sveltekit-superforms'
     import { formSchema } from '$lib/schemas/characters'
     import { Button } from '$lib/components/ui/button'
-    import type { Scene } from '$lib/types/Scene'
+    import type { Scene } from '@prisma/client'
     import { goto } from '$app/navigation'
 
     let { character, editForm, scenes } = $props<{

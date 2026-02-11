@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Scene } from '$lib/types/Scene'
+    import type { Scene } from '@prisma/client'
     import { Check } from 'lucide-svelte'
     import { createEventDispatcher } from 'svelte'
 

@@ -1,10 +1,10 @@
 <script lang="ts">
-    import type { Scene } from '$lib/types/Scene'
+    import type { Scene } from '@prisma/client'
     import { fly } from 'svelte/transition'
     import { enhance } from '$app/forms'
     import SceneEditForm from './scene-edit-form.svelte'
     import type { SuperValidated, Infer } from 'sveltekit-superforms'
-    import { formSchema } from '$lib/schemas/scenes'
+    import { createSceneSchema } from '$lib/schemas/scenes'
     import { Button } from '$lib/components/ui/button'
     import type { Character } from '$lib/types/Character'
     import { goto } from '$app/navigation'
@@ -12,7 +12,7 @@
 
     let { scene, editForm, characters } = $props<{
         scene: Scene
-        editForm: SuperValidated<Infer<typeof formSchema>>
+        editForm: SuperValidated<Infer<typeof createSceneSchema>>
         characters: Character[]
     }>()
     let isExpanded = $state(false)

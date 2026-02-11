@@ -11,7 +11,7 @@
     import { zodClient } from 'sveltekit-superforms/adapters'
     import { toast } from 'svelte-sonner'
     import CharacterSelector from '$lib/components/forms/character-selector.svelte'
-    import type { Scene } from '$lib/types/Scene'
+    import type { Scene } from '@prisma/client'
     import { slide } from 'svelte/transition'
     import type { Character } from '$lib/types/Character'
 

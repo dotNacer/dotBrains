@@ -8,4 +8,4 @@ export const formSchema = z.object({
     sceneIds: z.array(z.number()).default([]),
 }) satisfies z.ZodType<CreateCharacterDto>
 
-export type FormSchema = typeof formSchema
+export type FormSchema = z.infer<typeof formSchema>
