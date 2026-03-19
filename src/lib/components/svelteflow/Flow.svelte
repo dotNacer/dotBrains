@@ -7,112 +7,80 @@
 		type OnConnectEnd,
 		type Node,
 		type Edge,
+		type XYPosition,
 		type NodeTargetEventWithPointer,
 		useSvelteFlow,
 	} from '@xyflow/svelte'
+	import { untrack } from 'svelte'
 	import { nodeTypes, defaultEdgeOptions } from '$lib'
-	import { onMount } from 'svelte'
-	import { nodesActions } from '$lib/stores/nodeStore'
-	import { edgesActions } from '$lib/stores/edgeStore'
-	import { flowActions } from '$lib/stores/flowStore'
-	import { formatDBNodes, formatDBEdges } from '$lib/utils/svelteflow'
+	import { nodeApi } from '$lib/stores/nodeStore'
+	import { edgeApi } from '$lib/stores/edgeStore'
+	import { formatDBNodes, formatDBEdges, formatDBNode, formatDBEdge } from '$lib/utils/svelteflow'
 	import { NodeType, EdgeType } from '@prisma/client'
 	import type { Scene } from '@prisma/client'
-	import type { Edge as PrismaEdge } from '@prisma/client'
+	import type { Node as PrismaNode, Edge as PrismaEdge } from '@prisma/client'
 
 	let { scene, baseNodes, baseEdges } = $props<{
 		scene: Scene
-		baseNodes: Node[]
+		baseNodes: PrismaNode[]
 		baseEdges: PrismaEdge[]
 	}>()
 
-	let isHandlingNodeHandling = $state(false)
+	let nodes = $state.raw<Node[]>(untrack(() => formatDBNodes(baseNodes)))
+	let edges = $state.raw<Edge[]>(untrack(() => formatDBEdges(baseEdges)))
 
-	onMount(() => {
-		nodesActions.setBaseNodes(baseNodes)
-		edgesActions.setBaseEdges(baseEdges)
-	})
+	let isHandlingNodeHandling = $state(false)
+	let menuNodeVisible = $state(false)
 
 	const { screenToFlowPosition } = useSvelteFlow()
 
 	const handleDelete: OnDelete = async ({ nodes: deletedNodes, edges: deletedEdges }) => {
-		// Suppression des edges avant les nodes
-		deletedEdges.forEach((edge) => {
-			edgesActions.deleteEdge(edge.id, scene.id)
-		})
+		const deletedNodeIds = new Set(deletedNodes.map((n) => n.id))
+		const deletedEdgeIds = new Set(deletedEdges.map((e) => e.id))
 
-		deletedNodes.forEach((node) => {
-			nodesActions.deleteNode(node.id, scene.id)
-		})
-	}
+		nodes = nodes.filter((n) => !deletedNodeIds.has(n.id))
+		edges = edges.filter((e) => !deletedEdgeIds.has(e.id))
 
-	// Déplacement et débounce
-	let dragDebounceTimer: ReturnType<typeof setTimeout>
-
-	const handleNodeDrag: NodeTargetEventWithPointer<MouseEvent | TouchEvent, Node> = (e) => {
-		let draggedNodes = e.nodes as Node[]
-
-		//FIXME: Quand je déplace un node alors qu'il est selectionné, le node passe en unselected, penser a le laisser selected
-		//FIXME: Une erreur survient quand le node se fait supprimer avant que ça soit save, c'est pas handicapant mais il faudrait fix ça.
-		clearTimeout(dragDebounceTimer)
-		dragDebounceTimer = setTimeout(async () => {
-			for (const node of draggedNodes) {
-				nodesActions.updateNode(node.id, scene.id, {
-					positionX: node.position.x,
-					positionY: node.position.y,
-				} as any)
-			}
-			console.log('Saved')
-		}, 1000)
-	}
-
-	let nodes = $derived.by(() => {
-		const baseNodes = formatDBNodes($nodesActions)
-		if ($flowActions.menuNode.visible) {
-			const position = $flowActions.menuNode.position
-			baseNodes.push({
-				id: '__menu__',
-				type: 'MENU',
-				position: { x: position.x, y: position.y },
-				width: 320,
-				height: 200,
-				data: { title: 'Menu' },
-			})
+		for (const edge of deletedEdges) {
+			edgeApi.deleteEdge(edge.id, scene.id)
 		}
-		return baseNodes
-	})
+		for (const node of deletedNodes) {
+			nodeApi.deleteNode(node.id, scene.id)
+		}
+	}
 
-	let edges = $derived.by(() => {
-		return formatDBEdges($edgesActions)
-	})
+	const handleNodeDragStop: NodeTargetEventWithPointer<MouseEvent | TouchEvent, Node> = (e) => {
+		for (const node of e.nodes as Node[]) {
+			nodeApi.saveNodePosition(node.id, scene.id, node.position.x, node.position.y)
+		}
+	}
 
 	const handleConnectEnd: OnConnectEnd = async (event, connectionState) => {
-		let isConnectingToANode = connectionState.isValid
-		if (isConnectingToANode) {
+		if (connectionState.isValid) {
 			const sourceId = connectionState.fromHandle?.nodeId
 			const targetId = connectionState.toHandle?.nodeId
 
 			if (sourceId && targetId) {
-				await edgesActions.addEdge({
+				const prismaEdge = await edgeApi.addEdge({
 					sourceId,
 					targetId,
 					sceneId: scene.id,
 					type: EdgeType.smoothstep,
 					animated: true,
 				})
+				edges = [...edges, formatDBEdge(prismaEdge)]
 			}
 		} else {
 			if (!connectionState.to) return
 
-			// Determine pointer coordinates for both touch and mouse events,
-			// and exit early if we can't find any.
 			const touch =
 				'touches' in event ? (event.touches?.[0] ?? event.changedTouches?.[0]) : null
 			const clientX = touch?.clientX ?? ('clientX' in event ? event.clientX : undefined)
 			const clientY = touch?.clientY ?? ('clientY' in event ? event.clientY : undefined)
 			if (clientX == null || clientY == null) return
+
 			isHandlingNodeHandling = true
-			flowActions.setMenuNode(true, screenToFlowPosition({ x: clientX, y: clientY }))
+			showMenuNode(screenToFlowPosition({ x: clientX, y: clientY }))
 
 			setTimeout(() => {
 				isHandlingNodeHandling = false
@@ -122,36 +90,58 @@
 
 	const handlePaneClick = ({ event }: { event: MouseEvent }) => {
 		if (isHandlingNodeHandling) return
-		flowActions.setMenuNode(false, { x: 0, y: 0 })
+		hideMenuNode()
+	}
+
+	async function addNode(type: NodeType, position: { x: number; y: number }) {
+		const prismaNode = await nodeApi.addNode({
+			type,
+			positionX: position.x,
+			positionY: position.y,
+			width: 300,
+			height: 150,
+			title: 'test',
+			sceneId: scene.id,
+		})
+		nodes = [...nodes, formatDBNode(prismaNode)]
+	}
+
+	function showMenuNode(position: XYPosition) {
+		hideMenuNode()
+		menuNodeVisible = true
+		nodes = [
+			...nodes,
+			{
+				id: '__menu__',
+				type: 'MENU',
+				position: { x: position.x, y: position.y },
+				width: 320,
+				height: 200,
+				data: { title: 'Menu' },
+			},
+		]
+	}
+
+	function hideMenuNode() {
+		if (!menuNodeVisible) return
+		menuNodeVisible = false
+		nodes = nodes.filter((n) => n.id !== '__menu__')
 	}
 </script>
 
 <div class="h-screen w-full">
-	<button
-		onclick={() =>
-			nodesActions.addNode({
-				type: NodeType.EVENT,
-				positionX: 0,
-				positionY: 0,
-				width: 300,
-				height: 150,
-				title: 'test',
-				sceneId: scene.id,
-			})}
-	>
-		Addnode
-	</button>
+	<button onclick={() => addNode(NodeType.EVENT, { x: 0, y: 0 })}> Addnode </button>
 
 	<SvelteFlow
 		class="bg-card!"
-		{nodes}
-		{edges}
+		bind:nodes
+		bind:edges
 		{nodeTypes}
 		{defaultEdgeOptions}
 		fitView
 		fitViewOptions={{ padding: 2, duration: 300, interpolate: 'smooth' }}
 		ondelete={handleDelete}
-		onnodedrag={handleNodeDrag}
+		onnodedragstop={handleNodeDragStop}
 		connectionLineComponent={ConnectionLine}
 		onconnectend={handleConnectEnd}
 		onpaneclick={handlePaneClick}
@@ -159,9 +149,7 @@
 		<div class="absolute bottom-0 flex w-full items-center justify-center">
 			<div class="bg-card z-30 mb-4 rounded-xl border p-4">
 				{nodes.length}
-				<p>{$flowActions.menuNode.visible ? 'Menu ouvert' : 'Menu fermé'}</p>
-				<p>{$flowActions.menuNode.position.x}</p>
-				<p>{$flowActions.menuNode.position.y}</p>
+				<p>{menuNodeVisible ? 'Menu ouvert' : 'Menu fermé'}</p>
 			</div>
 		</div>
 	</SvelteFlow>
