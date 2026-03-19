@@ -3,16 +3,14 @@
 	import { theme } from '$lib/stores/theme'
 	import Logo from '$lib/components/ui/Logo.svelte'
 	import { onMount } from 'svelte'
-	import {  BookMarked, PanelRightOpen } from 'lucide-svelte'
+	import { BookMarked, PanelRightOpen } from 'lucide-svelte'
 	import { page } from '$app/stores'
 	import { fly, slide } from 'svelte/transition'
 	let isExpanded = $state(true)
 	let navWidth = $derived(isExpanded ? 256 : 64)
 	let isDragging = $state(false)
 
-	const navigationLinks = [
-		{ href: '/scenes', icon: BookMarked, label: 'Scenes' },
-	]
+	const navigationLinks = [{ href: '/scenes', icon: BookMarked, label: 'Scenes' }]
 
 	onMount(() => {
 		const storedTheme = localStorage.getItem('theme') as 'dark' | 'light'
@@ -64,7 +62,7 @@
 
 <nav
 	style="width: {navWidth}px"
-	class="relative flex h-screen flex-col border-r border-border p-4 transition-all duration-150"
+	class="border-border relative flex h-screen flex-col border-r p-4 transition-all duration-150"
 >
 	<div
 		class="title flex items-center gap-2 border-b {isExpanded
@@ -83,7 +81,7 @@
 		{/if}
 		{#if isExpanded}
 			<button
-				class="rounded-lg p-2 hover:bg-muted-foreground/20"
+				class="hover:bg-muted-foreground/20 rounded-lg p-2"
 				onclick={() => (isExpanded = !isExpanded)}
 			>
 				<PanelRightOpen class="h-5 w-5" />
@@ -115,7 +113,7 @@
 	</div>
 
 	<div
-		class="absolute bottom-0 right-0 top-0 w-1 cursor-col-resize transition-colors hover:bg-primary/50"
+		class="hover:bg-primary/50 absolute top-0 right-0 bottom-0 w-1 cursor-col-resize transition-colors"
 		onmousedown={handleMouseDown}
 		role="button"
 		tabindex="0"

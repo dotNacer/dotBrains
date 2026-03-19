@@ -30,7 +30,6 @@ export const deleteNode = command(
 	}
 )
 
-
 export const getNodesBySceneId = query(z.string(), async (sceneId) => {
 	return await prisma.node.findMany({
 		where: { sceneId },

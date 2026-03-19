@@ -28,9 +28,7 @@ export const edgeApi = {
 		sceneId: string,
 		updates: Partial<z.infer<CreateEdgeSchema>>
 	): Promise<PrismaEdge> => {
-		const { data, error } = await tryCatch(
-			updateEdge({ id: edgeId, sceneId, data: updates })
-		)
+		const { data, error } = await tryCatch(updateEdge({ id: edgeId, sceneId, data: updates }))
 		if (error) {
 			console.error('Error updating edge:', error)
 			throw error

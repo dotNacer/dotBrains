@@ -37,9 +37,7 @@ export const nodeApi = {
 		sceneId: string,
 		updates: Partial<z.infer<CreateNodeSchema>>
 	): Promise<PrismaNode> => {
-		const { data, error } = await tryCatch(
-			updateNode({ id: nodeId, sceneId, data: updates })
-		)
+		const { data, error } = await tryCatch(updateNode({ id: nodeId, sceneId, data: updates }))
 		if (error) {
 			console.error('Error updating node:', error)
 			throw error

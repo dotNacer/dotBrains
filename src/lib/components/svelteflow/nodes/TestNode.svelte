@@ -16,7 +16,7 @@
 	<div
 		in:blurAndFade={{ y: -10, duration: 75 }}
 		out:fly={{ y: 100, duration: 150 }}
-		class="flex h-full w-full border bg-background p-2"
+		class="bg-background flex h-full w-full border p-2"
 	>
 		{data.title}
 	</div>

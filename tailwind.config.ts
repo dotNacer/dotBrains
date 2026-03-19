@@ -21,18 +21,15 @@ const config: Config = {
 				foreground: 'hsl(var(--foreground) / <alpha-value>)',
 				primary: {
 					DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
-					foreground:
-						'hsl(var(--primary-foreground) / <alpha-value>)',
+					foreground: 'hsl(var(--primary-foreground) / <alpha-value>)',
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary) / <alpha-value>)',
-					foreground:
-						'hsl(var(--secondary-foreground) / <alpha-value>)',
+					foreground: 'hsl(var(--secondary-foreground) / <alpha-value>)',
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive) / <alpha-value>)',
-					foreground:
-						'hsl(var(--destructive-foreground) / <alpha-value>)',
+					foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)',
 				},
 				muted: {
 					DEFAULT: 'hsl(var(--muted) / <alpha-value>)',
@@ -44,8 +41,7 @@ const config: Config = {
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover) / <alpha-value>)',
-					foreground:
-						'hsl(var(--popover-foreground) / <alpha-value>)',
+					foreground: 'hsl(var(--popover-foreground) / <alpha-value>)',
 				},
 				card: {
 					DEFAULT: 'hsl(var(--card) / <alpha-value>)',
@@ -55,11 +51,9 @@ const config: Config = {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
 					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground':
-						'hsl(var(--sidebar-primary-foreground))',
+					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
 					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground':
-						'hsl(var(--sidebar-accent-foreground))',
+					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))',
 				},

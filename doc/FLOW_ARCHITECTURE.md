@@ -40,7 +40,6 @@ dotBrains is a web application designed to manage and visualize story scenes in 
 ### Phase 1: Basic Structure
 
 1. Implement base node system
-
     - Position tracking
     - Scene association
     - Basic node types
@@ -53,7 +52,6 @@ dotBrains is a web application designed to manage and visualize story scenes in 
 ### Phase 2: Enhanced Features
 
 1. Add edge properties
-
     - Animation support
     - Conditional logic
     - Transition metadata

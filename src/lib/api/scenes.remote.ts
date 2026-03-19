@@ -107,9 +107,7 @@ export const getSceneById = query(z.string(), async (id) => {
 		error(500, 'Erreur lors de la récupération de la scène')
 	}
 
-	if (!scene)
-		error(404, 'Scène introuvable')
-
+	if (!scene) error(404, 'Scène introuvable')
 
 	return scene
 })

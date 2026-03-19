@@ -6,7 +6,7 @@
 	import Navbar from '$lib/components/ui/Navbar.svelte'
 </script>
 
-<div class="flex min-h-screen bg-background text-foreground">
+<div class="bg-background text-foreground flex min-h-screen">
 	<Navbar />
 
 	<!-- Contenu principal -->
